@@ -33,7 +33,8 @@
   <rosdep name="ps-engine" />
 
   <export>
-    <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lopenni_nodelet -lopenni_driver" />
+    <cpp cflags="-I${prefix}/include -I/usr/include/openni"
+         lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lopenni_nodelet -lopenni_driver" />
     <nodelet plugin="${prefix}/openni_nodelets.xml" />
   </export>
 
