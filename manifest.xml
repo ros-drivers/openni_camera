@@ -1,0 +1,42 @@
+
+<package>
+  <description brief="An OpenNI camera ROS driver">
+
+    A ROS driver for OpenNI depth (+ RGB) cameras. These include:
+    <ul>
+      <li> Microsoft Kinect </li>
+      <li> PrimeSense PSDK </li>
+      <li> ASUS Xtion Pro and Pro Live </li>
+    </ul>
+
+    The driver publishes raw depth, RGB, and IR image streams.
+
+  </description>
+
+  <author>Patrick Mihelich, Suat Gedikli, Radu Bogdan Rusu</author>
+
+  <license>BSD</license>
+
+  <url>http://ros.org/wiki/openni_camera</url>
+
+  <review status="experimental" notes="beta"/>
+
+  <depend package="camera_info_manager" />
+  <depend package="dynamic_reconfigure" />
+  <depend package="image_transport" />
+  <depend package="nodelet" />
+  <depend package="roscpp" />
+  <depend package="sensor_msgs" />
+
+  <rosdep name="libusb-1.0-dev" />
+  <rosdep name="openni-dev" />
+  <rosdep name="ps-engine" />
+
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lopenni_nodelet -lopenni_driver" />
+    <nodelet plugin="${prefix}/openni_nodelets.xml" />
+  </export>
+
+  <platform os="ubuntu" version="10.04"/>
+  <platform os="ubuntu" version="10.10"/>
+</package>
