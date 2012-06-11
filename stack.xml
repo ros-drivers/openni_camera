@@ -11,7 +11,7 @@
     The driver publishes raw depth, RGB, and IR image streams.
 
   </description>
-  <author>Patrick Mihelich, Suat Gedikli, Radu Bogdan Rusu</author>
+  <author>Maintained by Vincent Rabaud vrabaud@willowgarage.com</author>
   <license>BSD</license>  
   <review status="unreviewed" notes=""/>
   <version>1.8.0</version>
