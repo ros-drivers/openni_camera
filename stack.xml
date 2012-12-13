@@ -14,7 +14,7 @@
   <author>Maintained by Vincent Rabaud vrabaud@willowgarage.com</author>
   <license>BSD</license>  
   <review status="unreviewed" notes=""/>
-  <version>1.8.0</version>
+  <version>1.8.3</version>
   <url>http://ros.org/wiki/openni_camera</url>
 
   <depend stack="common_msgs" /> <!-- common_msgs -->
