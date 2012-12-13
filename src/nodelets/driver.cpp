@@ -447,10 +447,22 @@ void DriverNodelet::publishRgbImage(const openni_wrapper::Image& image, ros::Tim
   sensor_msgs::ImagePtr rgb_msg = boost::make_shared<sensor_msgs::Image >();
   rgb_msg->header.stamp = time;
   rgb_msg->header.frame_id = rgb_frame_id_;
+  bool downscale = false;
   if (image.getEncoding() == openni_wrapper::Image::BAYER_GRBG)
   {
-    rgb_msg->encoding = sensor_msgs::image_encodings::BAYER_GRBG8;
-    rgb_msg->step = image_width_;
+    if (image.getWidth() == image_width_ && image.getHeight() == image_height_)
+    {
+      // image sizes match, we can copy directly
+      rgb_msg->encoding = sensor_msgs::image_encodings::BAYER_GRBG8;
+      rgb_msg->step = image_width_;
+    }
+    else
+    {
+      // image sizes missmatch, we have to downscale and de-bayer in this function
+      rgb_msg->encoding = sensor_msgs::image_encodings::RGB8;
+      rgb_msg->step = image_width_ * 3;
+      downscale = true;
+    }
   }
   else if (image.getEncoding() == openni_wrapper::Image::YUV422)
   {
@@ -461,7 +473,13 @@ void DriverNodelet::publishRgbImage(const openni_wrapper::Image& image, ros::Tim
   rgb_msg->width = image_width_;
   rgb_msg->data.resize(rgb_msg->height * rgb_msg->step);
   
-  image.fillRaw(&rgb_msg->data[0]);
+  if (downscale)
+  {
+    openni_wrapper::ImageBayerGRBG bayer_image(image.getMetaDataPtr(), openni_wrapper::ImageBayerGRBG::Bilinear);
+    bayer_image.fillRGB(image_width_, image_height_, &rgb_msg->data[0]);
+  }
+  else
+    image.fillRaw(&rgb_msg->data[0]);
   
   pub_rgb_.publish(rgb_msg, getRgbCameraInfo(time));
 }
