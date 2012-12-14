@@ -41,6 +41,7 @@
 #include "openni_camera/openni_image.h"
 #include "openni_camera/openni_depth_image.h"
 #include "openni_camera/openni_ir_image.h"
+#include "openni_camera/openni_image_yuv_422.h"
 #include <sensor_msgs/image_encodings.h>
 #include <sensor_msgs/distortion_models.h>
 #include <boost/algorithm/string/replace.hpp>
@@ -443,7 +444,6 @@ void DriverNodelet::irCb(boost::shared_ptr<openni_wrapper::IRImage> ir_image, vo
 
 void DriverNodelet::publishRgbImage(const openni_wrapper::Image& image, ros::Time time) const
 {
-  /// @todo image_width_, image_height_ may be wrong here if downsampling is on?
   sensor_msgs::ImagePtr rgb_msg = boost::make_shared<sensor_msgs::Image >();
   rgb_msg->header.stamp = time;
   rgb_msg->header.frame_id = rgb_frame_id_;
@@ -466,8 +466,19 @@ void DriverNodelet::publishRgbImage(const openni_wrapper::Image& image, ros::Tim
   }
   else if (image.getEncoding() == openni_wrapper::Image::YUV422)
   {
-    rgb_msg->encoding = sensor_msgs::image_encodings::YUV422;
-    rgb_msg->step = image_width_ * 2; // 4 bytes for 2 pixels
+    if (image.getWidth() == image_width_ && image.getHeight() == image_height_)
+    {
+      // image sizes match, we can copy directly
+      rgb_msg->encoding = sensor_msgs::image_encodings::YUV422;
+      rgb_msg->step = image_width_ * 2; // 4 bytes for 2 pixels
+    }
+    else
+    {
+      // image sizes missmatch, we have to downscale and convert in this function
+      rgb_msg->encoding = sensor_msgs::image_encodings::RGB8;
+      rgb_msg->step = image_width_ * 3;
+      downscale = true;
+    }
   }
   rgb_msg->height = image_height_;
   rgb_msg->width = image_width_;
@@ -475,8 +486,16 @@ void DriverNodelet::publishRgbImage(const openni_wrapper::Image& image, ros::Tim
   
   if (downscale)
   {
-    openni_wrapper::ImageBayerGRBG bayer_image(image.getMetaDataPtr(), openni_wrapper::ImageBayerGRBG::Bilinear);
-    bayer_image.fillRGB(image_width_, image_height_, &rgb_msg->data[0]);
+    if (image.getEncoding() == openni_wrapper::Image::BAYER_GRBG)
+    {
+      openni_wrapper::ImageBayerGRBG bayer_image(image.getMetaDataPtr(), openni_wrapper::ImageBayerGRBG::Bilinear);
+      bayer_image.fillRGB(image_width_, image_height_, &rgb_msg->data[0]);
+    }
+    else if (image.getEncoding() == openni_wrapper::Image::YUV422)
+    {
+      openni_wrapper::ImageYUV422 yuv_image(image.getMetaDataPtr());
+      yuv_image.fillRGB(image_width_, image_height_, &rgb_msg->data[0]);
+    }
   }
   else
     image.fillRaw(&rgb_msg->data[0]);
