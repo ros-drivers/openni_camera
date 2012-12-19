@@ -112,7 +112,8 @@ unsigned OpenNIDriver::updateDeviceList () throw ()
 
   // enumerate image nodes
   static xn::NodeInfoList image_nodes;
-  status = context_.EnumerateProductionTrees (XN_NODE_TYPE_IMAGE, NULL, image_nodes, NULL);
+  static xn::EnumerationErrors enumeration_errors;
+  status = context_.EnumerateProductionTrees (XN_NODE_TYPE_IMAGE, NULL, image_nodes, &enumeration_errors);
   
 
   // Suat: This is an ugly ASUS Xtion workaround.
@@ -132,6 +133,11 @@ unsigned OpenNIDriver::updateDeviceList () throw ()
         }
       }
     }
+  }
+  else {
+    XnChar strError[1024];
+    enumeration_errors.ToString(strError, 1024);
+    THROW_OPENNI_EXCEPTION("enumerating image nodes failed. Reason: %s", strError);
   }
 
   // enumerate IR nodes
