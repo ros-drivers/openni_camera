@@ -114,32 +114,31 @@ unsigned OpenNIDriver::updateDeviceList () throw ()
   static xn::NodeInfoList image_nodes;
   static xn::EnumerationErrors enumeration_errors;
   status = context_.EnumerateProductionTrees (XN_NODE_TYPE_IMAGE, NULL, image_nodes, &enumeration_errors);
-  
-
-  // Suat: This is an ugly ASUS Xtion workaround.
-  if (status == XN_STATUS_OK)
+  if (status != XN_STATUS_OK)
   {
-    //THROW_OPENNI_EXCEPTION ("enumerating image generators failed. Reason: %s", xnGetStatusString (status));
-
-    for (xn::NodeInfoList::Iterator nodeIt = image_nodes.Begin (); nodeIt != image_nodes.End (); ++nodeIt)
+    // the asus pro doesn't produce images, so if the error is just "can't create node of the given type", then
+    // we ignore it (that is what error code 65565 is). if this is some other error, for instance unable
+    // to access the device due to permissions, then we throw an exception. -jbinney
+    if((enumeration_errors.Begin()).Error() != 65565) {
+      XnChar strError[1024];
+      enumeration_errors.ToString(strError, 1024);
+      THROW_OPENNI_EXCEPTION("enumerating image nodes failed. Reason: %s", strError);
+    }
+  }
+  
+  for (xn::NodeInfoList::Iterator nodeIt = image_nodes.Begin (); nodeIt != image_nodes.End (); ++nodeIt)
     {
       // check to which device this node is assigned to
       for (xn::NodeInfoList::Iterator neededIt = (*nodeIt).GetNeededNodes ().Begin (); neededIt != (*nodeIt).GetNeededNodes ().End (); ++neededIt)
-      {
-        if ( connection_string_map_.count ((*neededIt).GetCreationInfo ()) )
         {
-          unsigned device_index = connection_string_map_[(*neededIt).GetCreationInfo ()];
-          device_context_[device_index].image_node.reset (new xn::NodeInfo(*nodeIt));
+          if ( connection_string_map_.count ((*neededIt).GetCreationInfo ()) )
+            {
+              unsigned device_index = connection_string_map_[(*neededIt).GetCreationInfo ()];
+              device_context_[device_index].image_node.reset (new xn::NodeInfo(*nodeIt));
+            }
         }
-      }
     }
-  }
-  else {
-    XnChar strError[1024];
-    enumeration_errors.ToString(strError, 1024);
-    THROW_OPENNI_EXCEPTION("enumerating image nodes failed. Reason: %s", strError);
-  }
-
+  
   // enumerate IR nodes
   static xn::NodeInfoList ir_nodes;
   status = context_.EnumerateProductionTrees (XN_NODE_TYPE_IR, NULL, ir_nodes, NULL);
