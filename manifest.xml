@@ -29,8 +29,8 @@
   <depend package="sensor_msgs" />
 
   <rosdep name="libusb-1.0-dev" />
-  <rosdep name="openni-dev" />
-  <rosdep name="ps-engine" />
+  <rosdep name="libopenni-dev" />
+  <rosdep name="libopenni-sensor-primesense-dev" />
 
   <export>
     <cpp cflags="-I${prefix}/include -I/usr/include/openni"
