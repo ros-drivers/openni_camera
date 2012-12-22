@@ -5,6 +5,12 @@ set(ROS_BUILD_TYPE RelWithDebInfo)
 rosbuild_init()
 rosbuild_make_distribution(1.8.5)
 
+include(FindPkgConfig)
+
+pkg_check_modules(OPENNI libopenni)
+
+#message("Hello world ${OPENNI_LIBRARIES} ${OPENNI_INCLUDEDIR}")
+
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
 # Dynamic reconfigure
@@ -13,7 +19,7 @@ include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
 gencfg()
 
 rosbuild_add_boost_directories()
-include_directories(/usr/include/openni)
+include_directories(OPENNI_INCLUDEDIR)
 
 # OpenNI Driver standalone library
 rosbuild_add_library(openni_driver src/openni_driver.cpp
@@ -29,7 +35,7 @@ rosbuild_add_library(openni_driver src/openni_driver.cpp
                                    src/openni_ir_image.cpp
                                    src/openni_depth_image.cpp
                      )
-target_link_libraries(openni_driver usb-1.0 OpenNI)
+target_link_libraries(openni_driver OPENNI_LIBRARIES)
 
 # ROS nodelets library
 rosbuild_add_library(openni_nodelet src/nodelets/driver.cpp)
