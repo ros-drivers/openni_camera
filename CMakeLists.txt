@@ -3,7 +3,7 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 set(ROS_BUILD_TYPE RelWithDebInfo)
 rosbuild_init()
-rosbuild_make_distribution(1.8.5)
+rosbuild_make_distribution(1.8.6)
 
 include(FindPkgConfig)
 
