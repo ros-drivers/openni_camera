@@ -13,8 +13,9 @@ generate_dynamic_reconfigure_options(cfg/OpenNI.cfg)
 
 catkin_package(
   INCLUDE_DIRS include  
-  LIBRARIES openni_nodelet openni_driver ${PC_LIBOPENNI_LIBRARIES} 
+  LIBRARIES openni_nodelet openni_driver  
   CATKIN_DEPENDS camera_info_manager dynamic_reconfigure image_transport nodelet roscpp
+  DEPENDS Boost PC_LIBOPENNI
 )
 
 include_directories(include 
@@ -48,12 +49,12 @@ target_link_libraries(openni_driver ${catkin_LIBRARIES}
 # ROS nodelets library
 add_library(openni_nodelet src/nodelets/driver.cpp)
 target_link_libraries(openni_nodelet openni_driver ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-add_dependencies(openni_nodelet OpenNI_gencfg)
+add_dependencies(openni_nodelet ${PROJECT_NAME}_gencfg)
 
 # Node version of ROS driver
 add_executable(openni_node src/nodes/openni_node.cpp)
 target_link_libraries(openni_node openni_driver ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-add_dependencies(openni_nodelet OpenNI_gencfg)
+add_dependencies(openni_node ${PROJECT_NAME}_gencfg)
 
 install(TARGETS openni_driver openni_nodelet openni_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
