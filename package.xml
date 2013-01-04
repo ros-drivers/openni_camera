@@ -42,8 +42,7 @@
   <run_depend>libopenni-sensor-primesense-dev</run_depend>
 
   <export>
-    <rviz plugin="${prefix}/openni_nodelets.xml"/>
-    <image_transport plugin="${prefix}/openni_nodelets.xml" />
+    <nodelet plugin="${prefix}/openni_nodelets.xml"/>
   </export>
 
 </package>
