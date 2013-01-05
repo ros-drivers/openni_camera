@@ -46,17 +46,12 @@ target_link_libraries(openni_driver ${catkin_LIBRARIES}
                                     ${PC_LIBOPENNI_LIBRARIES}
 )
 
-# ROS nodelets library
-add_library(openni_nodelet src/nodelets/driver.cpp)
-target_link_libraries(openni_nodelet openni_driver ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-add_dependencies(openni_nodelet ${PROJECT_NAME}_gencfg)
-
 # Node version of ROS driver
-add_executable(openni_node src/nodes/openni_node.cpp)
+add_executable(openni_node src/nodes/openni_node_main.cpp src/nodes/openni_node.cpp)
 target_link_libraries(openni_node openni_driver ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(openni_node ${PROJECT_NAME}_gencfg)
 
-install(TARGETS openni_driver openni_nodelet openni_node
+install(TARGETS openni_driver openni_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -64,10 +59,3 @@ install(TARGETS openni_driver openni_nodelet openni_node
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
-
-# add xml file
-install(FILES openni_nodelets.xml
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-
-

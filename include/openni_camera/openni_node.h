@@ -41,7 +41,6 @@
 
 // ROS communication
 #include <ros/ros.h>
-#include <nodelet/nodelet.h>
 #include <image_transport/image_transport.h>
 
 // Configuration
@@ -55,17 +54,16 @@
 namespace openni_camera
 {
   ////////////////////////////////////////////////////////////////////////////////////////////
-  class DriverNodelet : public nodelet::Nodelet
+  class OpenniNode
   {
     public:
-      virtual ~DriverNodelet ();
+      void initialize ();
+      virtual ~OpenniNode ();
     private:
       typedef OpenNIConfig Config;
       typedef dynamic_reconfigure::Server<Config> ReconfigureServer;
 
-      /** \brief Nodelet initialization routine. */
-      virtual void onInit ();
-      void onInitImpl ();
+      void initializeImpl ();
       void setupDevice ();
       void updateModeMaps ();
       void startSynchronization ();
