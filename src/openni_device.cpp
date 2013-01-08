@@ -501,12 +501,17 @@ void OpenNIDevice::ImageDataThreadFunction () throw (OpenNIException)
     if (quit_)
       return;
 
+
     image_generator_.WaitAndUpdateData ();
+
+    xn::ImageMetaData image_md;
+    image_generator_.GetMetaData (image_md);
     boost::shared_ptr<xn::ImageMetaData> image_data (new xn::ImageMetaData);
-    image_generator_.GetMetaData (*image_data);
+
+    image_data->CopyFrom (image_md);  
 
     image_lock.unlock ();
-    
+
     boost::shared_ptr<Image> image = getCurrentImage (image_data);
     for (map< OpenNIDevice::CallbackHandle, ActualImageCallbackFunction >::iterator callbackIt = image_callback_.begin (); callbackIt != image_callback_.end (); ++callbackIt)
     {
@@ -528,10 +533,16 @@ void OpenNIDevice::DepthDataThreadFunction () throw (OpenNIException)
       return;
 
     depth_generator_.WaitAndUpdateData ();
+
+    xn::DepthMetaData depth_md;
+ 
+    depth_generator_.GetMetaData (depth_md);
     boost::shared_ptr<xn::DepthMetaData> depth_data (new xn::DepthMetaData);
-    depth_generator_.GetMetaData (*depth_data);
-    depth_lock.unlock ();
+   
+    depth_data->CopyFrom (depth_md);
     
+    depth_lock.unlock ();
+
     boost::shared_ptr<DepthImage> depth_image ( new DepthImage (depth_data, baseline_, getDepthFocalLength (), shadow_value_, no_sample_value_) );
 
     for (map< OpenNIDevice::CallbackHandle, ActualDepthImageCallbackFunction >::iterator callbackIt = depth_callback_.begin ();
@@ -555,8 +566,12 @@ void OpenNIDevice::IRDataThreadFunction () throw (OpenNIException)
       return;
 
     ir_generator_.WaitAndUpdateData ();
+
+    xn::IRMetaData ir_md;
+    ir_generator_.GetMetaData (ir_md);
     boost::shared_ptr<xn::IRMetaData> ir_data (new xn::IRMetaData);
-    ir_generator_.GetMetaData (*ir_data);
+    ir_data->CopyFrom (ir_md);
+    
     ir_lock.unlock ();
 
     boost::shared_ptr<IRImage> ir_image ( new IRImage (ir_data) );
