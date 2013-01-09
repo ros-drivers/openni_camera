@@ -508,6 +508,21 @@ void OpenNIDevice::ImageDataThreadFunction () throw (OpenNIException)
     image_generator_.GetMetaData (image_md);
     boost::shared_ptr<xn::ImageMetaData> image_data (new xn::ImageMetaData);
 
+    //printf("Image resolution is %d x %d, with %d bytes per pixel\n", image_md.XRes(), image_md.YRes(), image_md.BytesPerPixel());
+    unsigned int num_black = 0;
+    for(XnUInt32 xi=0; xi < image_md.XRes(); xi++)
+    {
+        for(XnUInt32 yi=0; yi < image_md.YRes(); yi++)
+        {
+            unsigned int v = image_md.ImageMap()(xi, yi);
+            if(v == 0)
+                num_black++;
+        }
+    }
+    printf("%d black pixels out of %d total\n", num_black, image_md.XRes()*image_md.YRes());
+
+
+
     image_data->CopyFrom (image_md);  
 
     image_lock.unlock ();
