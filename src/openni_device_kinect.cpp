@@ -66,7 +66,7 @@ DeviceKinect::DeviceKinect (xn::Context& context, const xn::NodeInfo& device_nod
     THROW_OPENNI_EXCEPTION ("Error setting the image input format to Uncompressed 8-bit BAYER. Reason: %s", xnGetStatusString (status));
 
   // Grayscale: bypass debayering -> gives us bayer pattern!
-  status = image_generator_.SetPixelFormat (XN_PIXEL_FORMAT_GRAYSCALE_8_BIT);
+  status = image_generator_.SetPixelFormat (XN_PIXEL_FORMAT_RGB24);
   if (status != XN_STATUS_OK)
     THROW_OPENNI_EXCEPTION ("Failed to set image pixel format to 8bit-grayscale. Reason: %s", xnGetStatusString (status));
   image_lock.unlock ();
