@@ -112,6 +112,7 @@ namespace openni_camera
       /** \brief reconfigure server*/
       boost::shared_ptr<ReconfigureServer> reconfigure_server_;
       Config config_;
+      bool config_init_;
 
       /** \brief Camera info manager objects. */
       boost::shared_ptr<camera_info_manager::CameraInfoManager> rgb_info_manager_, ir_info_manager_;
