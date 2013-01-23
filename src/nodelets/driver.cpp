@@ -76,6 +76,16 @@ DriverNodelet::~DriverNodelet ()
 
 void DriverNodelet::onInit ()
 {
+  ros::NodeHandle& param_nh = getPrivateNodeHandle(); 
+
+  // Initialize the sensor, but don't start any streams yet. That happens in the connection callbacks.
+  updateModeMaps();
+  setupDevice();
+
+  // Initialize dynamic reconfigure
+  reconfigure_server_.reset( new ReconfigureServer(param_nh) );
+  reconfigure_server_->setCallback(boost::bind(&DriverNodelet::configCb, this, _1, _2));
+  
   // Setting up device can take awhile but onInit shouldn't block, so we spawn a
   // new thread to do all the initialization
   init_thread_ = boost::thread(boost::bind(&DriverNodelet::onInitImpl, this));
@@ -101,13 +111,6 @@ void DriverNodelet::onInitImpl ()
   rgb_frame_counter_ = depth_frame_counter_ = ir_frame_counter_ = 0;
   publish_rgb_ = publish_ir_ = publish_depth_ = true;
 
-  // Initialize the sensor, but don't start any streams yet. That happens in the connection callbacks.
-  updateModeMaps();
-  setupDevice();
-
-  // Initialize dynamic reconfigure
-  reconfigure_server_.reset( new ReconfigureServer(param_nh) );
-  reconfigure_server_->setCallback(boost::bind(&DriverNodelet::configCb, this, _1, _2));
 
   // Camera TF frames
   param_nh.param("rgb_frame_id",   rgb_frame_id_,   string("/openni_rgb_optical_frame"));
