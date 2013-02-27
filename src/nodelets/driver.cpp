@@ -78,6 +78,8 @@ void DriverNodelet::onInit ()
 {
   ros::NodeHandle& param_nh = getPrivateNodeHandle(); 
 
+  config_init_ = false;
+
   // Initialize the sensor, but don't start any streams yet. That happens in the connection callbacks.
   updateModeMaps();
   setupDevice();
@@ -382,6 +384,9 @@ void DriverNodelet::checkFrameCounters()
 
 void DriverNodelet::rgbCb(boost::shared_ptr<openni_wrapper::Image> image, void* cookie)
 {
+  if (!config_init_)
+    return;
+
   ros::Time time = ros::Time::now () + ros::Duration(config_.image_time_offset);
   time_stamp_ = time; // for watchdog
 
@@ -404,6 +409,9 @@ void DriverNodelet::rgbCb(boost::shared_ptr<openni_wrapper::Image> image, void* 
 
 void DriverNodelet::depthCb(boost::shared_ptr<openni_wrapper::DepthImage> depth_image, void* cookie)
 {
+  if (!config_init_)
+    return;
+
   ros::Time time = ros::Time::now () + ros::Duration(config_.depth_time_offset);
   time_stamp_ = time; // for watchdog
 
@@ -426,6 +434,9 @@ void DriverNodelet::depthCb(boost::shared_ptr<openni_wrapper::DepthImage> depth_
 
 void DriverNodelet::irCb(boost::shared_ptr<openni_wrapper::IRImage> ir_image, void* cookie)
 {
+  if (!config_init_)
+    return;
+
   ros::Time time = ros::Time::now() + ros::Duration(config_.depth_time_offset);
   time_stamp_ = time; // for watchdog
 
@@ -748,6 +759,8 @@ void DriverNodelet::configCb(Config &config, uint32_t level)
 
   // now we can copy
   config_ = config;
+
+  config_init_ = true;
 }
 
 void DriverNodelet::startSynchronization()
