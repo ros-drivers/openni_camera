@@ -503,7 +503,7 @@ void DriverNodelet::publishRgbImage(const openni_wrapper::Image& image, ros::Tim
   else
     image.fillRaw(&rgb_msg->data[0]);
   
-  pub_rgb_.publish(rgb_msg, getRgbCameraInfo(time));
+  pub_rgb_.publish(rgb_msg, getRgbCameraInfo(rgb_msg->width,rgb_msg->height,time));
 }
 
 void DriverNodelet::publishDepthImage(const openni_wrapper::DepthImage& depth, ros::Time time) const
@@ -514,12 +514,12 @@ void DriverNodelet::publishDepthImage(const openni_wrapper::DepthImage& depth, r
   sensor_msgs::ImagePtr depth_msg = boost::make_shared<sensor_msgs::Image>();
   depth_msg->header.stamp    = time;
   depth_msg->encoding        = sensor_msgs::image_encodings::TYPE_16UC1;
-  depth_msg->height          = depth_height_;
   depth_msg->width           = depth_width_;
+  depth_msg->height          = depth_height_;
   depth_msg->step            = depth_msg->width * sizeof(short);
   depth_msg->data.resize(depth_msg->height * depth_msg->step);
 
-  depth.fillDepthImageRaw(depth_width_, depth_height_, reinterpret_cast<unsigned short*>(&depth_msg->data[0]),
+  depth.fillDepthImageRaw(depth_msg->width, depth_msg->height, reinterpret_cast<unsigned short*>(&depth_msg->data[0]),
                           depth_msg->step);
 
   if (z_offset_mm_ != 0)
@@ -534,19 +534,19 @@ void DriverNodelet::publishDepthImage(const openni_wrapper::DepthImage& depth, r
   {
     // Publish RGB camera info and raw depth image to depth_registered/ ns
     depth_msg->header.frame_id = rgb_frame_id_;
-    pub_depth_registered_.publish(depth_msg, getRgbCameraInfo(time));
+    pub_depth_registered_.publish(depth_msg, getRgbCameraInfo(depth_msg->width, depth_msg->height, time));
   }
   else
   {
     // Publish depth camera info and raw depth image to depth/ ns
     depth_msg->header.frame_id = depth_frame_id_;
-    pub_depth_.publish(depth_msg, getDepthCameraInfo(time));
+    pub_depth_.publish(depth_msg, getDepthCameraInfo(depth_msg->width, depth_msg->height, time));
   }
 
   // Projector "info" probably only useful for working with disparity images
   if (pub_projector_info_.getNumSubscribers() > 0)
   {
-    pub_projector_info_.publish(getProjectorCameraInfo(time));
+    pub_projector_info_.publish(getProjectorCameraInfo(depth_msg->width, depth_msg->height, time));
   }
 }
 
@@ -563,7 +563,7 @@ void DriverNodelet::publishIrImage(const openni_wrapper::IRImage& ir, ros::Time 
 
   ir.fillRaw(ir.getWidth(), ir.getHeight(), reinterpret_cast<unsigned short*>(&ir_msg->data[0]));
 
-  pub_ir_.publish(ir_msg, getIrCameraInfo(time));
+  pub_ir_.publish(ir_msg, getIrCameraInfo(ir.getWidth(), ir.getHeight(), time));
 }
 
 sensor_msgs::CameraInfoPtr DriverNodelet::getDefaultCameraInfo(int width, int height, double f) const
@@ -601,18 +601,24 @@ sensor_msgs::CameraInfoPtr DriverNodelet::getDefaultCameraInfo(int width, int he
 }
 
 /// @todo Use binning/ROI properly in publishing camera infos
-sensor_msgs::CameraInfoPtr DriverNodelet::getRgbCameraInfo(ros::Time time) const
+sensor_msgs::CameraInfoPtr DriverNodelet::getRgbCameraInfo(int width, int height, ros::Time time) const
 {
   sensor_msgs::CameraInfoPtr info;
 
   if (rgb_info_manager_->isCalibrated())
   {
     info = boost::make_shared<sensor_msgs::CameraInfo>(rgb_info_manager_->getCameraInfo());
+    if ( info->width != width )
+    {
+      // Use uncalibrated values
+      ROS_WARN_ONCE("Image resolution doesn't match calibration of the RGB camera. Using default parameters.");
+      info = getDefaultCameraInfo(width, height, device_->getImageFocalLength(width));
+    }
   }
   else
   {
     // If uncalibrated, fill in default values
-    info = getDefaultCameraInfo(image_width_, image_height_, device_->getImageFocalLength(image_width_));
+    info = getDefaultCameraInfo(width, height, device_->getImageFocalLength(width));
   }
 
   // Fill in header
@@ -622,18 +628,24 @@ sensor_msgs::CameraInfoPtr DriverNodelet::getRgbCameraInfo(ros::Time time) const
   return info;
 }
 
-sensor_msgs::CameraInfoPtr DriverNodelet::getIrCameraInfo(ros::Time time) const
+sensor_msgs::CameraInfoPtr DriverNodelet::getIrCameraInfo(int width, int height, ros::Time time) const
 {
   sensor_msgs::CameraInfoPtr info;
 
   if (ir_info_manager_->isCalibrated())
   {
     info = boost::make_shared<sensor_msgs::CameraInfo>(ir_info_manager_->getCameraInfo());
+    if ( info->width != width )
+    {
+      // Use uncalibrated values
+      ROS_WARN_ONCE("Image resolution doesn't match calibration of the IR camera. Using default parameters.");
+      info = getDefaultCameraInfo(width, height, device_->getImageFocalLength(width));
+    }
   }
   else
   {
     // If uncalibrated, fill in default values
-    info = getDefaultCameraInfo(depth_width_, depth_height_, device_->getDepthFocalLength(depth_width_));
+    info = getDefaultCameraInfo(width, height, device_->getDepthFocalLength(width));
   }
 
   // Fill in header
@@ -643,28 +655,30 @@ sensor_msgs::CameraInfoPtr DriverNodelet::getIrCameraInfo(ros::Time time) const
   return info;
 }
 
-sensor_msgs::CameraInfoPtr DriverNodelet::getDepthCameraInfo(ros::Time time) const
+sensor_msgs::CameraInfoPtr DriverNodelet::getDepthCameraInfo(int width, int height, ros::Time time) const
 {
   // The depth image has essentially the same intrinsics as the IR image, BUT the
   // principal point is offset by half the size of the hardware correlation window
-  // (probably 9x9 or 9x7). See http://www.ros.org/wiki/kinect_calibration/technical
+  // (probably 9x9 or 9x7 in 640x480 mode). See http://www.ros.org/wiki/kinect_calibration/technical
 
-  sensor_msgs::CameraInfoPtr info = getIrCameraInfo(time);
-  info->K[2] -= depth_ir_offset_x_; // cx
-  info->K[5] -= depth_ir_offset_y_; // cy
-  info->P[2] -= depth_ir_offset_x_; // cx
-  info->P[6] -= depth_ir_offset_y_; // cy
+  double scaling = (double)width / 640;
+
+  sensor_msgs::CameraInfoPtr info = getIrCameraInfo(width, height, time);
+  info->K[2] -= depth_ir_offset_x_*scaling; // cx
+  info->K[5] -= depth_ir_offset_y_*scaling; // cy
+  info->P[2] -= depth_ir_offset_x_*scaling; // cx
+  info->P[6] -= depth_ir_offset_y_*scaling; // cy
 
   /// @todo Could put this in projector frame so as to encode the baseline in P[3]
   return info;
 }
 
-sensor_msgs::CameraInfoPtr DriverNodelet::getProjectorCameraInfo(ros::Time time) const
+sensor_msgs::CameraInfoPtr DriverNodelet::getProjectorCameraInfo(int width, int height, ros::Time time) const
 {
   // The projector info is simply the depth info with the baseline encoded in the P matrix.
   // It's only purpose is to be the "right" camera info to the depth camera's "left" for
   // processing disparity images.
-  sensor_msgs::CameraInfoPtr info = getDepthCameraInfo(time);
+  sensor_msgs::CameraInfoPtr info = getDepthCameraInfo(width, height, time);
   // Tx = -baseline * fx
   info->P[3] = -device_->getBaseline() * info->P[0];
   return info;
@@ -676,17 +690,26 @@ void DriverNodelet::configCb(Config &config, uint32_t level)
   depth_ir_offset_y_ = config.depth_ir_offset_y;
   z_offset_mm_ = config.z_offset_mm;
 
-  XnMapOutputMode old_depth_mode = device_->getDepthOutputMode ();
-  
-  // We need this for the ASUS Xtion Pro
-  XnMapOutputMode old_image_mode = old_depth_mode, image_mode, compatible_image_mode;
+  // Based on the config options, try to set the depth/image mode
+  // The device driver might decide to switch to a 'compatible mode',
+  // i.e. a higher resolution than the requested one, in which case it
+  // will later downsample the image.
+  // Only if the 'compatible mode' is different from the current one, we will
+  // need to reset the streams.
+
+  bool depth_mode_changed = false;
+  bool image_mode_changed = false;
+
+  XnMapOutputMode compatible_image_mode;
+  XnMapOutputMode compatible_depth_mode;
+
   if (device_->hasImageStream ())
   {
-    old_image_mode = device_->getImageOutputMode ();
-     
-    // does the device support the new image mode?
-    image_mode = mapConfigMode2XnMode (config.image_mode);
+    XnMapOutputMode image_mode = mapConfigMode2XnMode (config.image_mode);
+    image_width_  = image_mode.nXRes;
+    image_height_ = image_mode.nYRes;
 
+    // does the device support the new image mode?
     if (!device_->findCompatibleImageMode (image_mode, compatible_image_mode))
     {
       XnMapOutputMode default_mode = device_->getDefaultImageMode();
@@ -698,43 +721,56 @@ void DriverNodelet::configCb(Config &config, uint32_t level)
       config.image_mode = mapXnMode2ConfigMode(default_mode);
       image_mode = compatible_image_mode = default_mode;
     }
+
+    if ( compatible_image_mode != device_->getImageOutputMode () )
+    {
+      image_mode_changed = true;
+    }
   }
   
-  XnMapOutputMode depth_mode, compatible_depth_mode;
-  depth_mode = mapConfigMode2XnMode (config.depth_mode);
-  if (!device_->findCompatibleDepthMode (depth_mode, compatible_depth_mode))
+  if (device_->hasDepthStream())
   {
-    XnMapOutputMode default_mode = device_->getDefaultDepthMode();
-    NODELET_WARN ("Could not find any compatible depth output mode for %d x %d @ %d. "
-                  "Falling back to default depth output mode %d x %d @ %d.",
-                  depth_mode.nXRes, depth_mode.nYRes, depth_mode.nFPS,
-                  default_mode.nXRes, default_mode.nYRes, default_mode.nFPS);
-    
-    config.depth_mode = mapXnMode2ConfigMode(default_mode);
-    depth_mode = compatible_depth_mode = default_mode;
+    XnMapOutputMode depth_mode = mapConfigMode2XnMode (config.depth_mode);
+    depth_width_  = depth_mode.nXRes;
+    depth_height_ = depth_mode.nYRes;
+
+    // does the device support the new depth mode?
+    if (!device_->findCompatibleDepthMode (depth_mode, compatible_depth_mode))
+    {
+      XnMapOutputMode default_mode = device_->getDefaultDepthMode();
+      NODELET_WARN ("Could not find any compatible depth output mode for %d x %d @ %d. "
+                    "Falling back to default depth output mode %d x %d @ %d.",
+                    depth_mode.nXRes, depth_mode.nYRes, depth_mode.nFPS,
+                    default_mode.nXRes, default_mode.nYRes, default_mode.nFPS);
+
+      config.depth_mode = mapXnMode2ConfigMode(default_mode);
+      depth_mode = compatible_depth_mode = default_mode;
+    }
+
+    if ( compatible_depth_mode != device_->getDepthOutputMode () )
+    {
+      depth_mode_changed = true;
+    }
   }
 
   // here everything is fine. Now make the changes
-  if ( (device_->hasImageStream () && compatible_image_mode != old_image_mode) ||
-       compatible_depth_mode != old_depth_mode)
+  if ( image_mode_changed || depth_mode_changed )
   {
     // streams need to be reset!
     stopSynchronization();
 
-    if (device_->hasImageStream () && compatible_image_mode != old_image_mode)
+    if ( image_mode_changed )
+    {
       device_->setImageOutputMode (compatible_image_mode);
+    }
 
-    if (compatible_depth_mode != old_depth_mode)
+    if ( depth_mode_changed )
+    {
       device_->setDepthOutputMode (compatible_depth_mode);
+    }
 
     startSynchronization ();
   }
-
-  // Desired dimensions may require decimation from the hardware-compatible ones
-  image_width_  = image_mode.nXRes;
-  image_height_ = image_mode.nYRes;
-  depth_width_  = depth_mode.nXRes;
-  depth_height_ = depth_mode.nYRes;
 
   /// @todo Run connectCb if registration setting changes
   if (device_->isDepthRegistered () && !config.depth_registration)
