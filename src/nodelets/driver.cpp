@@ -487,21 +487,28 @@ void DriverNodelet::publishRgbImage(const openni_wrapper::Image& image, ros::Tim
   rgb_msg->width = image_width_;
   rgb_msg->data.resize(rgb_msg->height * rgb_msg->step);
   
-  if (downscale)
+  try
   {
-    if (image.getEncoding() == openni_wrapper::Image::BAYER_GRBG)
+    if (downscale)
     {
-      openni_wrapper::ImageBayerGRBG bayer_image(image.getMetaDataPtr(), openni_wrapper::ImageBayerGRBG::Bilinear);
-      bayer_image.fillRGB(image_width_, image_height_, &rgb_msg->data[0]);
+      if (image.getEncoding() == openni_wrapper::Image::BAYER_GRBG)
+      {
+        openni_wrapper::ImageBayerGRBG bayer_image(image.getMetaDataPtr(), openni_wrapper::ImageBayerGRBG::Bilinear);
+        bayer_image.fillRGB(image_width_, image_height_, &rgb_msg->data[0]);
+      }
+      else if (image.getEncoding() == openni_wrapper::Image::YUV422)
+      {
+        openni_wrapper::ImageYUV422 yuv_image(image.getMetaDataPtr());
+        yuv_image.fillRGB(image_width_, image_height_, &rgb_msg->data[0]);
+      }
     }
-    else if (image.getEncoding() == openni_wrapper::Image::YUV422)
-    {
-      openni_wrapper::ImageYUV422 yuv_image(image.getMetaDataPtr());
-      yuv_image.fillRGB(image_width_, image_height_, &rgb_msg->data[0]);
-    }
+    else
+      image.fillRaw(&rgb_msg->data[0]);
   }
-  else
-    image.fillRaw(&rgb_msg->data[0]);
+  catch ( OpenNIException e )
+  {
+    ROS_ERROR_THROTTLE(1,e.what());
+  }
   
   pub_rgb_.publish(rgb_msg, getRgbCameraInfo(rgb_msg->width,rgb_msg->height,time));
 }
@@ -519,8 +526,15 @@ void DriverNodelet::publishDepthImage(const openni_wrapper::DepthImage& depth, r
   depth_msg->step            = depth_msg->width * sizeof(short);
   depth_msg->data.resize(depth_msg->height * depth_msg->step);
 
-  depth.fillDepthImageRaw(depth_msg->width, depth_msg->height, reinterpret_cast<unsigned short*>(&depth_msg->data[0]),
-                          depth_msg->step);
+  try
+  {
+    depth.fillDepthImageRaw(depth_msg->width, depth_msg->height, reinterpret_cast<unsigned short*>(&depth_msg->data[0]),
+                            depth_msg->step);
+  }
+  catch ( OpenNIException e )
+  {
+    ROS_ERROR_THROTTLE(1,e.what());
+  }
 
   if (z_offset_mm_ != 0)
   {
@@ -561,7 +575,14 @@ void DriverNodelet::publishIrImage(const openni_wrapper::IRImage& ir, ros::Time 
   ir_msg->step            = ir_msg->width * sizeof(uint16_t);
   ir_msg->data.resize(ir_msg->height * ir_msg->step);
 
-  ir.fillRaw(ir.getWidth(), ir.getHeight(), reinterpret_cast<unsigned short*>(&ir_msg->data[0]));
+  try
+  {
+    ir.fillRaw(ir.getWidth(), ir.getHeight(), reinterpret_cast<unsigned short*>(&ir_msg->data[0]));
+  }
+  catch ( OpenNIException e )
+  {
+    ROS_ERROR_THROTTLE(1,e.what());
+  }
 
   pub_ir_.publish(ir_msg, getIrCameraInfo(ir.getWidth(), ir.getHeight(), time));
 }
