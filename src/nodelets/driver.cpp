@@ -547,12 +547,20 @@ void DriverNodelet::publishDepthImage(const openni_wrapper::DepthImage& depth, r
     ROS_ERROR_THROTTLE(1,e.what());
   }
 
+  if (fabs(z_scaling_ - 1.0) > 1e-6)
+  {
+    uint16_t* data = reinterpret_cast<uint16_t*>(&depth_msg->data[0]);
+    for (unsigned int i = 0; i < depth_msg->width * depth_msg->height; ++i)
+      if (data[i] != 0)
+	    data[i] = static_cast<uint16_t>(data[i] * z_scaling_);
+  }
+
   if (z_offset_mm_ != 0)
   {
     uint16_t* data = reinterpret_cast<uint16_t*>(&depth_msg->data[0]);
     for (unsigned int i = 0; i < depth_msg->width * depth_msg->height; ++i)
       if (data[i] != 0)
-	data[i] += z_offset_mm_;
+	    data[i] += z_offset_mm_;
   }
 
   if (registered)
@@ -721,6 +729,7 @@ void DriverNodelet::configCb(Config &config, uint32_t level)
   depth_ir_offset_x_ = config.depth_ir_offset_x;
   depth_ir_offset_y_ = config.depth_ir_offset_y;
   z_offset_mm_ = config.z_offset_mm;
+  z_scaling_ = config.z_scaling;
 
   // Based on the config options, try to set the depth/image mode
   // The device driver might decide to switch to a 'compatible mode',
