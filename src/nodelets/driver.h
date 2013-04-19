@@ -121,6 +121,7 @@ namespace openni_camera
       double depth_ir_offset_x_;
       double depth_ir_offset_y_;
       int z_offset_mm_;
+      double z_scaling_;
 
       // The desired image dimensions
       // (might be different from what the driver gives us).
