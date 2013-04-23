@@ -639,9 +639,27 @@ bool OpenNIDevice::unregisterIRCallback (const OpenNIDevice::CallbackHandle& cal
   return (ir_callback_.erase (callbackHandle) != 0);
 }
 
-const char* OpenNIDevice::getSerialNumber () const throw ()
+const char* OpenNIDevice::getSerialNumber () throw ()
 {
-  return device_node_info_.GetInstanceName ();
+    const char* openni_serial = device_node_info_.GetInstanceName ();
+    if (strlen(openni_serial)>0 && strcmp(openni_serial, "Device1")) {
+        return openni_serial;
+    } else {
+        char *primesense_serial = (char*)malloc(XN_MAX_NAME_LENGTH); // memleak
+        context_.CreateProductionTree(device_node_info_);
+        xn::Device device;
+
+        if(device_node_info_.GetInstance(device) != XN_STATUS_OK) {
+            THROW_OPENNI_EXCEPTION ("couldn't get device instance for reading serial no.");
+        }
+
+        xn::DeviceIdentificationCapability d = device.GetIdentificationCap();
+
+        d.GetSerialNumber(primesense_serial,XN_MAX_NAME_LENGTH);
+
+        device.Release();
+        return primesense_serial;
+    }
 }
 
 const char* OpenNIDevice::getConnectionString () const throw ()

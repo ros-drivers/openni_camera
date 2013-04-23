@@ -149,7 +149,7 @@ public:
   /** \brief returns the serial number for device.
    *  \attention This might be an empty string!!!
    */
-  const char* getSerialNumber () const throw ();
+  const char* getSerialNumber () throw ();
   /** \brief returns the connectionstring for current device, which has following format vendorID/productID\@BusID/DeviceID */
   const char* getConnectionString () const throw ();
 
