@@ -362,15 +362,12 @@ OpenNIDriver::getDeviceInfos () throw ()
 
     unsigned nodeIdx = addressIt->second;
     xn::NodeInfo& current_node = device_context_[nodeIdx].device_node;
-    XnProductionNodeDescription& description = const_cast<XnProductionNodeDescription&>(current_node.GetDescription ());
 
     libusb_device_descriptor descriptor;
     result = libusb_get_device_descriptor (devices[devIdx], &descriptor);
 
     if (result < 0)
     {
-      strcpy (description.strVendor, "unknown");
-      strcpy (description.strName, "unknown");
       current_node.SetInstanceName ("");
     }
     else
@@ -379,18 +376,11 @@ OpenNIDriver::getDeviceInfos () throw ()
       result = libusb_open (device, &dev_handle);
       if (result < 0)
       {
-        strcpy (description.strVendor, "unknown");
-        strcpy (description.strName, "unknown");
         current_node.SetInstanceName ("");
       }
       else
       {
         unsigned char buffer[1024];
-        libusb_get_string_descriptor_ascii (dev_handle, descriptor.iManufacturer, buffer, 1024);
-        strcpy (description.strVendor, (char*)buffer);
-
-        libusb_get_string_descriptor_ascii (dev_handle, descriptor.iProduct, buffer, 1024);
-        strcpy (description.strName, (char*)buffer);
 
         int len = libusb_get_string_descriptor_ascii (dev_handle, descriptor.iSerialNumber, buffer, 1024);
         if (len > 4)
