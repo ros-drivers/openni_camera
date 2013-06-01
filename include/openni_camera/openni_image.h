@@ -76,7 +76,7 @@ public:
   inline void 
   fillRaw (unsigned char* rgb_buffer) const throw (OpenNIException)
   {
-    memcpy (rgb_buffer, image_md_->Data(), image_md_->DataSize ());
+    memcpy (rgb_buffer, image_md_->WritableData(), image_md_->DataSize ());
   }
 
   virtual void fillGrayscale (unsigned width, unsigned height, unsigned char* gray_buffer,

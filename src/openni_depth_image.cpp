@@ -58,7 +58,7 @@ void DepthImage::fillDepthImageRaw(unsigned width, unsigned height, unsigned sho
   // special case no sclaing, no padding => memcopy!
   if (width == depth_md_->XRes () && height == depth_md_->YRes () && (line_step == width * sizeof (unsigned short)))
   {
-    memcpy (depth_buffer, depth_md_->Data(), depth_md_->DataSize ());
+    memcpy (depth_buffer, depth_md_->WritableData(), depth_md_->DataSize ());
     return;
   }
   

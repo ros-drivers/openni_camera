@@ -6,8 +6,7 @@ find_package(Boost COMPONENTS system filesystem thread REQUIRED)
 
 find_package(PkgConfig)
 pkg_check_modules(PC_LIBOPENNI REQUIRED libopenni)
-
-#message("Hello world ${PC_LIBOPENNI_LIBRARIES} ${PC_LIBOPENNI_INCLUDEDIR}")
+pkg_check_modules(PC_LIBUSB REQUIRED libusb-1.0)
 
 generate_dynamic_reconfigure_options(cfg/OpenNI.cfg)
 
@@ -44,6 +43,7 @@ add_library(openni_driver src/openni_driver.cpp
 target_link_libraries(openni_driver ${catkin_LIBRARIES}
                                     ${Boost_LIBRARIES} 
                                     ${PC_LIBOPENNI_LIBRARIES}
+                                    ${PC_LIBUSB_LIBRARIES}
 )
 
 # ROS nodelets library
