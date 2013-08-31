@@ -82,8 +82,6 @@ public:
   unsigned char  getBus (unsigned index) const throw ();
   unsigned char  getAddress (unsigned index) const throw ();
 
-  void getPrimesenseSerial(xn::NodeInfo info, char* buffer, unsigned buf_size) const throw ();
-
   void stopAll () throw (OpenNIException);
 
   static void getDeviceType (const std::string& connection_string, unsigned short& vendorId, unsigned short& productId);
