@@ -2,8 +2,8 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.1 (2014-01-17)
+------------------
 * add explicit dependency on log4cxx (`#21 <https://github.com/ros-drivers/openni_camera/issues/21>`_)
 * Contributors: Jack O'Quin
 
