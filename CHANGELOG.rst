@@ -2,8 +2,8 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.2 (2014-01-17)
+------------------
 * adding missing include of log4cxx/logger.h previously transitively included.
 * Contributors: Tully Foote
 

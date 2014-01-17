@@ -1,6 +1,6 @@
 <package>
   <name>openni_camera</name>
-  <version>1.9.1</version>
+  <version>1.9.2</version>
     <description>
     A ROS driver for OpenNI depth (+ RGB) cameras. These include: 
        Microsoft Kinect,
