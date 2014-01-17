@@ -2,6 +2,11 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* adding missing include of log4cxx/logger.h previously transitively included.
+* Contributors: Tully Foote
+
 1.9.1 (2014-01-17)
 ------------------
 * add explicit dependency on log4cxx (`#21 <https://github.com/ros-drivers/openni_camera/issues/21>`_)
