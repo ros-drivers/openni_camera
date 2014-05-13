@@ -44,8 +44,8 @@
 #include <map>
 #include <vector>
 
-
-using namespace std;
+using std::vector;
+using std::map;
 using namespace boost;
 
 namespace openni_wrapper
