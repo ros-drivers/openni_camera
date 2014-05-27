@@ -40,7 +40,6 @@
 #include <sstream>
 #include <boost/thread/mutex.hpp>
 
-using namespace std;
 using namespace boost;
 
 namespace openni_wrapper
