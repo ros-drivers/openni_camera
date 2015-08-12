@@ -520,7 +520,7 @@ void DriverNodelet::publishRgbImage(const openni_wrapper::Image& image, ros::Tim
   }
   catch ( OpenNIException e )
   {
-    ROS_ERROR_THROTTLE(1,e.what());
+    ROS_ERROR_THROTTLE(1,"%s",e.what());
   }
   
   pub_rgb_.publish(rgb_msg, getRgbCameraInfo(rgb_msg->width,rgb_msg->height,time));
@@ -546,7 +546,7 @@ void DriverNodelet::publishDepthImage(const openni_wrapper::DepthImage& depth, r
   }
   catch ( OpenNIException e )
   {
-    ROS_ERROR_THROTTLE(1,e.what());
+    ROS_ERROR_THROTTLE(1,"%s",e.what());
   }
 
   if (fabs(z_scaling_ - 1.0) > 1e-6)
@@ -602,7 +602,7 @@ void DriverNodelet::publishIrImage(const openni_wrapper::IRImage& ir, ros::Time 
   }
   catch ( OpenNIException e )
   {
-    ROS_ERROR_THROTTLE(1,e.what());
+    ROS_ERROR_THROTTLE(1,"%s",e.what());
   }
 
   pub_ir_.publish(ir_msg, getIrCameraInfo(ir.getWidth(), ir.getHeight(), time));
