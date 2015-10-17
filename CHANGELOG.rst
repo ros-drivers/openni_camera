@@ -2,8 +2,8 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.3 (2015-10-17)
+------------------
 * [fix] Remove several using namespace std
   - They cause compilation failure (on OS X 10.9 with clang defaulting
   to C++11)
