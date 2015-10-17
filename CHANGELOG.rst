@@ -2,6 +2,28 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [fix] Remove several using namespace std
+  - They cause compilation failure (on OS X 10.9 with clang defaulting
+  to C++11)
+  - Failure occurs because unique_lock and friends is both in namespace
+  std and namespace boost.
+* [fix] Don't pass unsafe strings as format strings for printing
+  Doing so causes build errors under `-Werror=format-security`. If there
+  were to be a % (percent symbol) in the exception string (whether
+  intentional, malicious or otherwise), the print function could
+  expose memory or cause segfaults.
+* [fix] `#28 <https://github.com/ros-drivers/openni_camera/issues/28>`_, properly parse device_id with only numbers
+  The fix checks wherever an string device_id parameter is set
+  or a device_id integer parameter is set. If both are missing
+  it opens the first device found. If integer device_id is set
+  then it parses it to string and load continues as if string
+  version was set.
+* [sys] Add travis config for indigo, jade
+* [sys] Update maintainer
+* Contributors: Emili Boronat, Nikolaus Demmel, Scott K Logan, Isaac I.Y. Saito
+
 1.9.2 (2014-01-17)
 ------------------
 * adding missing include of log4cxx/logger.h previously transitively included.
