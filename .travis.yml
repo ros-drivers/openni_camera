@@ -1,48 +1,37 @@
-language:
-  - cpp
-  - python
-python:
-  - "2.7"
+sudo: required
+dist: trusty
+# Force travis to use its minimal image with default Python settings
+language: generic
 compiler:
   - gcc
 env:
-  - ROS_DISTRO=hydro  ROSWS=wstool BUILDER=catkin    USE_DEB=true
-# matrix:
-#   allow_failures:
-#     - env: ROS_DISTRO=indigo  ROSWS=wstool BUILDER=catkin    USE_DEB=true  # Ubuntu Trusty not ready on travis
-before_install:
-  - export CI_SOURCE_PATH=$(pwd)
-  - export REPOSITORY_NAME=${PWD##*/}
-  - mkdir -p ~/ros/ws_$REPOSITORY_NAME/src
-  - cd ~/ros/ws_$REPOSITORY_NAME/src
-  - ln -s $CI_SOURCE_PATH . # Link the repo we are testing to the new workspace
-  - cd ..
-  - echo "Testing branch $TRAVIS_BRANCH of $REPOSITORY_NAME"
-  - sudo sh -c 'echo "deb http://packages.ros.org/ros-shadow-fixed/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros-latest.list'
+  global:
+    - CATKIN_WS=~/catkin_ws
+    - CATKIN_WS_SRC=${CATKIN_WS}/src
+  matrix:
+    - CI_ROS_DISTRO="indigo"
+    - CI_ROS_DISTRO="jade"
+install:
+  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - sudo apt-get update -qq
-install:
-  - sudo apt-get install -qq -y python-catkin-pkg python-rosdep python-wstool python-catkin-tools ros-$ROS_DISTRO-catkin
+  - sudo apt-get install -qq -y python-rosdep python-catkin-tools
   - sudo rosdep init
-  - rosdep update; while [ $? != 0 ]; do sleep 1; rosdep update; done
-  - rosdep install -r -n --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y	
-  - sudo apt-get install -q -qq -y python-setuptools python-catkin-pkg
-  # need to use indigo-devel to avoid rostest error
-  - (cd /tmp/; git clone -q https://github.com/catkin/catkin_tools; cd catkin_tools; git checkout 0.2.2; sudo python setup.py --quiet install)
-  - (cd /tmp/; git clone -q https://github.com/ros/catkin; cd catkin; git checkout 5edbba1; cmake . -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO/ ; make; sudo make install)
-  # for test_results issue
-  # - (cd /opt/ros/$ROS_DISTRO/lib/python2.7/dist-packages; wget --no-check-certificate https://patch-diff.githubusercontent.com/raw/ros/ros/pull/82.diff -O - | sudo patch -p4 )
-  # - (cd /opt/ros/$ROS_DISTRO/lib/python2.7/dist-packages; wget --no-check-certificate https://patch-diff.githubusercontent.com/raw/ros/ros_comm/pull/611.diff -O - | sudo patch -f -p4 || echo "ok" )
-  # - (cd /opt/ros/hydro/share; wget --no-check-certificate https://patch-diff.githubusercontent.com/raw/ros/ros_comm/pull/611.diff -O - | sed s@.cmake.em@.cmake@ | sed 's@/${PROJECT_NAME}@@' | sed 's@ DEPENDENCIES ${_rostest_DEPENDENCIES})@)@' | sudo patch -f -p2 || echo "ok" )
-  - env
+  - rosdep update
+  # Use rosdep to install all dependencies (including ROS itself)
+  - rosdep install --from-paths ./ -i -y --rosdistro $CI_ROS_DISTRO
 script:
-  - source /opt/ros/$ROS_DISTRO/setup.bash
-  - catkin build
-  - catkin run_tests
-  - catkin_test_results build
-  - catkin clean --all
-  - catkin config --install
-  - catkin build
-  - source install/setup.bash
-  - export EXIT_STATUS=0; for pkg in `catkin_topological_order ${CI_SOURCE_PATH} --only-names`; do echo "test $pkg..." ;[ "`find install/share/$pkg -iname '*.test'`" == "" ] && echo "[$pkg] No tests were found!!!"  || find install/share/$pkg -iname "*.test" -print0 | xargs -0 -n1 rostest || export EXIT_STATUS=$?; done; [ $EXIT_STATUS == 0 ]
-  - catkin_test_results ~/.ros/test_results
+  - source /opt/ros/$CI_ROS_DISTRO/setup.bash
+  - mkdir -p $CATKIN_WS_SRC
+  - ln -s $TRAVIS_BUILD_DIR $CATKIN_WS_SRC
+  - cd $CATKIN_WS
+  - catkin init
+  # Enable install space
+  #- catkin config --install
+  # Build [and Install] packages
+  - catkin build --limit-status-rate 0.1 --no-notify -DCMAKE_BUILD_TYPE=Release
+  # Build tests
+  - catkin build --limit-status-rate 0.1 --no-notify --make-args tests
+  # Run tests
+  ## Test cases exist but they are not in rostest form yet. So disable the following line for now.
+  ##- catkin run_tests
