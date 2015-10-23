@@ -27,7 +27,7 @@ script:
   - cd $CATKIN_WS
   - catkin init
   # Enable install space
-  #- catkin config --install
+  - catkin config --install
   # Build [and Install] packages
   - catkin build --limit-status-rate 0.1 --no-notify -DCMAKE_BUILD_TYPE=Release
   # Build tests
