@@ -2,6 +2,11 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove unneeded dependency (libopenni-sensor-primesense-dev is an internal plugin).
+* Contributors: Jochen Sprickerhof
+
 1.9.3 (2015-10-17)
 ------------------
 * [fix] Remove several using namespace std
