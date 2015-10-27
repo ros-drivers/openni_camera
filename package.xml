@@ -29,7 +29,6 @@
 
   <build_depend>libusb-1.0-dev</build_depend>
   <build_depend>libopenni-dev</build_depend>
-  <build_depend>libopenni-sensor-primesense-dev</build_depend>
 
   <run_depend>camera_info_manager</run_depend>
   <run_depend>dynamic_reconfigure</run_depend>
@@ -41,7 +40,6 @@
 
   <run_depend>libusb-1.0-dev</run_depend>
   <run_depend>libopenni-dev</run_depend>
-  <run_depend>libopenni-sensor-primesense-dev</run_depend>
 
   <export>
     <nodelet plugin="${prefix}/openni_nodelets.xml"/>
