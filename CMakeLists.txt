@@ -8,6 +8,15 @@ find_package(PkgConfig)
 pkg_check_modules(PC_LIBOPENNI REQUIRED libopenni)
 pkg_check_modules(PC_LIBUSB REQUIRED libusb-1.0)
 
+find_package(Log4cxx QUIET)
+if(NOT LOG4CXX_LIBRARIES)  
+    # backup plan, hope it is in the system path
+  find_library(LOG4CXX_LIBRARIES log4cxx)
+endif()
+if(NOT LOG4CXX_LIBRARIES)
+  message(ERROR "log4cxx required")
+endif()
+
 generate_dynamic_reconfigure_options(cfg/OpenNI.cfg)
 
 catkin_package(
@@ -44,6 +53,7 @@ target_link_libraries(openni_driver ${catkin_LIBRARIES}
                                     ${Boost_LIBRARIES} 
                                     ${PC_LIBOPENNI_LIBRARIES}
                                     ${PC_LIBUSB_LIBRARIES}
+                                    ${LOG4CXX_LIBRARIES}
 )
 
 # ROS nodelets library
