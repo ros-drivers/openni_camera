@@ -2,6 +2,12 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [feat] Updated max drop rate
+* [sys] Added log4cxx missing explicit linkage `#44 <https://github.com/ros-drivers/openni_camera/issues/44>`_
+* Contributors: Francois-Michel De Rainville, Isaac IY Saito, Leopold Palomo-Avellaneda, Isaac I.Y. Saito
+
 1.9.4 (2015-10-27)
 ------------------
 * Remove unneeded dependency (libopenni-sensor-primesense-dev is an internal plugin).
