@@ -2,8 +2,8 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.5 (2016-03-31)
+------------------
 * [feat] Updated max drop rate
 * [sys] Added log4cxx missing explicit linkage `#44 <https://github.com/ros-drivers/openni_camera/issues/44>`_
 * Contributors: Francois-Michel De Rainville, Isaac IY Saito, Leopold Palomo-Avellaneda, Isaac I.Y. Saito
