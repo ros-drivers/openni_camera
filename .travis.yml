@@ -1,37 +1,31 @@
-sudo: required
-dist: trusty
-# Force travis to use its minimal image with default Python settings
-language: generic
+# This config file for Travis CI utilizes ros-industrial/industrial_ci package.
+# For more info for the package, see https://github.com/ros-industrial/industrial_ci/blob/master/README.rst
+sudo: required 
+dist: trusty 
+services:
+  - docker
+language: generic 
 compiler:
   - gcc
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+    recipients:
+      - gm130s@gmail.com
 env:
-  global:
-    - CATKIN_WS=~/catkin_ws
-    - CATKIN_WS_SRC=${CATKIN_WS}/src
   matrix:
-    - CI_ROS_DISTRO="indigo"
-    - CI_ROS_DISTRO="jade"
+    - ROS_DISTRO="indigo" ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu  USE_DEB=true
+    - ROS_DISTRO="indigo" ROS_REPOSITORY_PATH=http://packages.ros.org/ros-shadow-fixed/ubuntu  USE_DEB=true
+    - ROS_DISTRO="indigo" PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
+    - ROS_DISTRO="jade"   ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu  USE_DEB=true
+    - ROS_DISTRO="jade"   ROS_REPOSITORY_PATH=http://packages.ros.org/ros-shadow-fixed/ubuntu  USE_DEB=true
+    - ROS_DISTRO="jade"   PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
+matrix:
+  allow_failures:
+    # Run docker-based ROS prerelease test http://wiki.ros.org/bloom/Tutorials/PrereleaseTest Because we might not want to run prerelease test for all PRs, it's omitted from pass-fail criteria.
+    - env: ROS_DISTRO="indigo" PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
+    - env: ROS_DISTRO="jade"   PRERELEASE=true PRERELEASE_DOWNSTREAM_DEPTH=1
 install:
-  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
-  - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq -y python-rosdep python-catkin-tools
-  - sudo rosdep init
-  - rosdep update
-  # Use rosdep to install all dependencies (including ROS itself)
-  - rosdep install --from-paths ./ -i -y --rosdistro $CI_ROS_DISTRO
-script:
-  - source /opt/ros/$CI_ROS_DISTRO/setup.bash
-  - mkdir -p $CATKIN_WS_SRC
-  - ln -s $TRAVIS_BUILD_DIR $CATKIN_WS_SRC
-  - cd $CATKIN_WS
-  - catkin init
-  # Enable install space
-  - catkin config --install
-  # Build [and Install] packages
-  - catkin build --limit-status-rate 0.1 --no-notify -DCMAKE_BUILD_TYPE=Release
-  # Build tests
-  - catkin build --limit-status-rate 0.1 --no-notify --make-args tests
-  # Run tests
-  ## Test cases exist but they are not in rostest form yet. So disable the following line for now.
-  ##- catkin run_tests
+  - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config && source .ci_config/travis.sh
+#  - source ./travis.sh  # Enable this when you have a package-local script 
