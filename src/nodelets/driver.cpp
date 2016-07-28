@@ -46,6 +46,8 @@
 #include <sensor_msgs/distortion_models.h>
 #include <boost/algorithm/string/replace.hpp>
 
+#include <log4cxx/logger.h>
+
 using namespace std;
 using namespace openni_wrapper;
 namespace openni_camera
