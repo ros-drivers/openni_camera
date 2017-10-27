@@ -949,4 +949,4 @@ void DriverNodelet::watchDog (const ros::TimerEvent& event)
 
 // Register as nodelet
 #include <pluginlib/class_list_macros.h>
-PLUGINLIB_DECLARE_CLASS (openni_camera, driver, openni_camera::DriverNodelet, nodelet::Nodelet);
+PLUGINLIB_EXPORT_CLASS(openni_camera::DriverNodelet, nodelet::Nodelet)
