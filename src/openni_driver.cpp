@@ -233,23 +233,7 @@ boost::shared_ptr<OpenNIDevice> OpenNIDriver::createVirtualDevice (const string&
 {
   return boost::shared_ptr<OpenNIDevice> (new DeviceONI (context_, path, repeat, stream));
 }
-
-void OpenNIDriver::getPrimesenseSerial(xn::NodeInfo info, char* buffer, unsigned buf_size) const throw () {
-
-        context_.CreateProductionTree(info);
-        xn::Device device;
-
-        if(info.GetInstance(device) != XN_STATUS_OK) {
-            THROW_OPENNI_EXCEPTION ("couldn't get device instance for reading serial no.");
-        }
-
-        xn::DeviceIdentificationCapability d = device.GetIdentificationCap();
-
-        d.GetSerialNumber(buffer,buf_size);
-
-        device.Release();
-}
-
+ 
 boost::shared_ptr<OpenNIDevice> OpenNIDriver::getDeviceByIndex (unsigned index) const throw (OpenNIException)
 {
   using namespace std;
@@ -362,12 +346,15 @@ OpenNIDriver::getDeviceInfos () throw ()
 
     unsigned nodeIdx = addressIt->second;
     xn::NodeInfo& current_node = device_context_[nodeIdx].device_node;
+    XnProductionNodeDescription& description = const_cast<XnProductionNodeDescription&>(current_node.GetDescription ());
 
     libusb_device_descriptor descriptor;
     result = libusb_get_device_descriptor (devices[devIdx], &descriptor);
 
     if (result < 0)
     {
+      strcpy (description.strVendor, "unknown");
+      strcpy (description.strName, "unknown");
       current_node.SetInstanceName ("");
     }
     else
@@ -376,11 +363,18 @@ OpenNIDriver::getDeviceInfos () throw ()
       result = libusb_open (device, &dev_handle);
       if (result < 0)
       {
+        strcpy (description.strVendor, "unknown");
+        strcpy (description.strName, "unknown");
         current_node.SetInstanceName ("");
       }
       else
       {
         unsigned char buffer[1024];
+        libusb_get_string_descriptor_ascii (dev_handle, descriptor.iManufacturer, buffer, 1024);
+        strcpy (description.strVendor, (char*)buffer);
+
+        libusb_get_string_descriptor_ascii (dev_handle, descriptor.iProduct, buffer, 1024);
+        strcpy (description.strName, (char*)buffer);
 
         int len = libusb_get_string_descriptor_ascii (dev_handle, descriptor.iSerialNumber, buffer, 1024);
         if (len > 4)
@@ -400,19 +394,7 @@ OpenNIDriver::getDeviceInfos () throw ()
 const char* OpenNIDriver::getSerialNumber (unsigned index) const throw ()
 {
 #ifndef _WIN32
-
-    DeviceContext con = device_context_[index];
-    const char* openni_serial = con.device_node.GetInstanceName ();
-
-    if (strlen(openni_serial)>0 && strcmp(openni_serial, "Device1")) {
-        return openni_serial;
-    } else {
-        char *primesense_serial = (char*)malloc(XN_MAX_NAME_LENGTH); // memleak
-        getPrimesenseSerial(con.device_node, primesense_serial, XN_MAX_NAME_LENGTH);
-
-        return primesense_serial;
-    }
-
+  return device_context_[index].device_node.GetInstanceName ();
 #else
   return "";
 #endif
