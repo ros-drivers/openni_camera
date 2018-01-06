@@ -2,6 +2,11 @@
 Changelog for package openni_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [maintenance] Repository moved to https://github.com/ros-drivers/openni_camera
+* Contributors: Isaac I.Y. Saito
+
 1.9.8 (2016-05-07)
 ------------------
 * [feat] adding depth_registered_filtered injection `#26 <https://github.com/ros-drivers/openni_launch/issues/26>`_
