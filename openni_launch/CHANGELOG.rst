@@ -2,8 +2,8 @@
 Changelog for package openni_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.10.0 (2018-01-06)
+-------------------
 * [maintenance] Repository moved to https://github.com/ros-drivers/openni_camera
 * Contributors: Isaac I.Y. Saito
 
