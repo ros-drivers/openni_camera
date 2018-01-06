@@ -2,6 +2,11 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Copying the entire openni_launch package from https://github.com/ros-drivers/openni_launch. `#57 <https://github.com/ros-drivers/openni_camera/issues/57>`_
+* Contributors: Isaac I.Y. Saito
+
 1.9.5 (2016-03-31)
 ------------------
 * [feat] Updated max drop rate
