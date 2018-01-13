@@ -8,6 +8,7 @@ import subprocess
 import unittest
 
 import rospkg
+import xacro
 
 
 class TestOpenniDescription(unittest.TestCase):
@@ -23,9 +24,15 @@ class TestOpenniDescription(unittest.TestCase):
         Check if check_urdf command passes with the urdf that is generated in
         the .test file this test case is called from.
         """
-        self.assertTrue(os.path.isfile(rospkg.RosPack().get_path('openni_description') + "/test/sample_kobuki.urdf.xacro")
-        print(subprocess.check_output(["rosrun", "xacro", "xacro", rospkg.RosPack().get_path('openni_description') + "/test/sample_kobuki.urdf.xacro", "-o", "./sample_kobuki.urdf"]))
-        self.assertEqual(0, subprocess.call(["check_urdf", "./sample_kobuki.urdf"]))
+        resulted_urdf_file_relpath = "./sample_kobuki.urdf"
+        kobuki_xacro_file_path = rospkg.RosPack().get_path('openni_description') + "/test/sample_kobuki.urdf.xacro"
+        self.assertTrue(os.path.isfile(kobuki_xacro_file_path))
+        xacro_output_memory = xacro.process_file(kobuki_xacro_file_path)
+        xacro_output_file = xacro.open_output(resulted_urdf_file_relpath)
+        xacro_output_file.write(xacro_output_memory.toprettyxml(indent='  '))
+        xacro_output_file.close()
+        self.assertTrue(os.path.isfile(resulted_urdf_file_relpath))
+        self.assertEqual(0, subprocess.call(["check_urdf", resulted_urdf_file_relpath]))
 
 if __name__ == '__main__':
     import rostest
