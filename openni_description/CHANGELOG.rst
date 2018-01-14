@@ -2,8 +2,8 @@
 Changelog for package openni_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.0 (2018-01-13)
+-------------------
 * Initial release. See https://discourse.ros.org/t/common-location-for-sensor-urdf-files/1758/
 * Contributors: Isaac I.Y. Saito
 
