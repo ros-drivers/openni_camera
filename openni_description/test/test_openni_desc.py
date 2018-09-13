@@ -25,7 +25,7 @@ class TestOpenniDescription(unittest.TestCase):
         the .test file this test case is called from.
         """
         resulted_urdf_file_relpath = "./sample_kobuki.urdf"
-        kobuki_xacro_file_path = rospkg.RosPack().get_path('openni_description') + "/test/sample_kobuki.urdf.xacro"
+        kobuki_xacro_file_path = rospkg.RosPack().get_path('openni_description') + "/test/model/kobuki_description/sample_kobuki.urdf.xacro"
         self.assertTrue(os.path.isfile(kobuki_xacro_file_path))
         xacro_output_memory = xacro.process_file(kobuki_xacro_file_path)
         xacro_output_file = xacro.open_output(resulted_urdf_file_relpath)
