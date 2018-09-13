@@ -46,7 +46,7 @@ while not rospy.is_shutdown() and consecutive_failures < 5:
         time.sleep(0.1)
         p.poll()
     if p.returncode is None:
-        print "Escalating to SIGTERM!"
+        print("Escalating to SIGTERM!")
         p.terminate()
         end = time.time() + 5.0
         p.poll()
@@ -54,7 +54,7 @@ while not rospy.is_shutdown() and consecutive_failures < 5:
             time.sleep(0.1)
             p.poll()
         if p.returncode is None:
-            print "Escalating to SIGKILL!!"
+            print("Escalating to SIGKILL!!")
             p.kill()
             p.wait()
 
@@ -77,9 +77,9 @@ while not rospy.is_shutdown() and consecutive_failures < 5:
         try:
             core_name = "core_%d" % attempt
             os.rename("core", core_name)
-            print "Core dump %s" % core_name
+            print("Core dump %s" % core_name)
         except OSError:
             pass
 
-print "Successes: %d" % successes
-print "Failures: %d" % failures
+print("Successes: %d" % successes)
+print("Failures: %d" % failures)

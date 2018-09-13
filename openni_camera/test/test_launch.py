@@ -63,9 +63,9 @@ while not rospy.is_shutdown() and consecutive_failures < 5:
             try:
                 core_name = "core_%d" % attempt
                 os.rename("core", core_name)
-                print "Core dump %s" % core_name
+                print("Core dump %s" % core_name)
             except OSError:
                 pass
 
-print "Successes: %d" % successes
-print "Failures: %d" % failures
+print("Successes: %d" % successes)
+print("Failures: %d" % failures)
