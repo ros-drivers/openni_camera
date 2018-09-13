@@ -2,8 +2,8 @@
 Changelog for package openni_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.1 (2018-09-13)
+-------------------
 * [improve] Python 3 conformity `#67 <https://github.com/ros-drivers/openni_camera/issues/67>`_
 * Contributors: Isaac I.Y. Saito, cclauss
 

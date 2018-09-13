@@ -1,6 +1,6 @@
 <package>
   <name>openni_launch</name>
-  <version>1.11.0</version>
+  <version>1.11.1</version>
     <description>
      Launch files to open an OpenNI device and load all nodelets to 
      convert raw depth/RGB/IR streams to depth images, disparity images, 
