@@ -2,6 +2,9 @@
 Changelog for package openni_launch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.11.0 (2018-01-13)
 -------------------
 
@@ -29,7 +32,7 @@ Changelog for package openni_launch
   [ WARN] [1432284298.914340788]: TF2 exception:
   Invalid argument "/camera_rgb_optical_frame" passed to lookupTransform argument target_frame in tf2 frame_ids cannot start with a '/' like:  (/camera/camera_nodelet_manager)
   Actually, tf_prefix is now ignored altogether.
-* Contributors: Jack O'Quin, Jonathan Binney, Martin Günther
+* Contributors: Jack O'Quin, Jonathan Binney, Martin Guenther
 
 1.9.5 (2014-04-18)
 ------------------

@@ -2,6 +2,11 @@
 Changelog for package openni_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove a test_depend on pkg that are not guaranteed to be available in newer distro. `#70 <https://github.com/ros-drivers/openni_camera/issues/70>`_
+* Contributors: Isaac I.Y. Saito
+
 1.11.0 (2018-01-13)
 -------------------
 * Initial release. See https://discourse.ros.org/t/common-location-for-sensor-urdf-files/1758/
