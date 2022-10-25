@@ -50,6 +50,7 @@
   <!-- Disable bond topics by default -->
   <arg name="bond" default="false" /> <!-- DEPRECATED, use respawn arg instead -->
   <arg name="respawn" default="$(arg bond)" />
+  <arg name="manager_respawn" default="false" />
 
   <!-- Worker threads for the nodelet manager -->
   <arg name="num_worker_threads" default="4" />
@@ -64,6 +65,7 @@
       <arg name="name"                value="$(arg manager)" />
       <arg name="debug"               value="$(arg debug)" />
       <arg name="num_worker_threads"  value="$(arg num_worker_threads)" />
+      <arg name="respawn"               value="$(arg manager_respawn)" />
     </include>
 
     <!-- Load driver -->
