@@ -44,7 +44,7 @@ using namespace boost;
 namespace openni_wrapper
 {
 
-DeviceXtionPro::DeviceXtionPro (xn::Context& context, const xn::NodeInfo& device_node, const xn::NodeInfo& depth_node, const xn::NodeInfo& ir_node) throw (OpenNIException)
+DeviceXtionPro::DeviceXtionPro (xn::Context& context, const xn::NodeInfo& device_node, const xn::NodeInfo& depth_node, const xn::NodeInfo& ir_node) 
 : OpenNIDevice (context, device_node, depth_node, ir_node)
 {
   // setup stream modes
@@ -70,7 +70,7 @@ bool DeviceXtionPro::isImageResizeSupported (unsigned input_width, unsigned inpu
   return false;
 }
 
-void DeviceXtionPro::enumAvailableModes () throw (OpenNIException)
+void DeviceXtionPro::enumAvailableModes () 
 {
   XnMapOutputMode output_mode;
   available_image_modes_.clear();
@@ -108,7 +108,7 @@ boost::shared_ptr<Image> DeviceXtionPro::getCurrentImage (boost::shared_ptr<xn::
   return boost::shared_ptr<Image> ((Image*)0);
 }
 
-void DeviceXtionPro::startDepthStream () throw (OpenNIException)
+void DeviceXtionPro::startDepthStream () 
 {
   if (isDepthRegistered ())
   {

@@ -43,7 +43,7 @@ using namespace boost;
 namespace openni_wrapper
 {
 
-DeviceONI::DeviceONI(xn::Context& context, const std::string& file_name, bool repeat, bool streaming) throw (OpenNIException)
+DeviceONI::DeviceONI(xn::Context& context, const std::string& file_name, bool repeat, bool streaming) 
   : OpenNIDevice(context)
   , streaming_ (streaming)
   , depth_stream_running_ (false)
@@ -97,58 +97,58 @@ DeviceONI::~DeviceONI() throw ()
   }
 }
 
-void DeviceONI::startImageStream () throw (OpenNIException)
+void DeviceONI::startImageStream () 
 {
   if (hasImageStream() && !image_stream_running_)
     image_stream_running_ = true;
 }
 
-void DeviceONI::stopImageStream () throw (OpenNIException)
+void DeviceONI::stopImageStream () 
 {
   if (hasImageStream() && image_stream_running_)
     image_stream_running_ = false;
 }
 
-void DeviceONI::startDepthStream () throw (OpenNIException)
+void DeviceONI::startDepthStream () 
 {
   if (hasDepthStream() && !depth_stream_running_)
     depth_stream_running_ = true;
 }
 
-void DeviceONI::stopDepthStream () throw (OpenNIException)
+void DeviceONI::stopDepthStream () 
 {
   if (hasDepthStream() && depth_stream_running_)
     depth_stream_running_ = false;
 }
 
-void DeviceONI::startIRStream () throw (OpenNIException)
+void DeviceONI::startIRStream () 
 {
   if (hasIRStream() && !ir_stream_running_)
     ir_stream_running_ = true;
 }
 
-void DeviceONI::stopIRStream () throw (OpenNIException)
+void DeviceONI::stopIRStream () 
 {
   if (hasIRStream() && ir_stream_running_)
     ir_stream_running_ = false;
 }
 
-bool DeviceONI::isImageStreamRunning () const throw (OpenNIException)
+bool DeviceONI::isImageStreamRunning () const 
 {
  return image_stream_running_;
 }
 
-bool DeviceONI::isDepthStreamRunning () const throw (OpenNIException)
+bool DeviceONI::isDepthStreamRunning () const 
 {
   return depth_stream_running_;
 }
 
-bool DeviceONI::isIRStreamRunning () const throw (OpenNIException)
+bool DeviceONI::isIRStreamRunning () const 
 {
   return ir_stream_running_;
 }
 
-bool DeviceONI::trigger () throw (OpenNIException)
+bool DeviceONI::trigger () 
 {
   if (player_.IsEOF())
     return false;
@@ -160,12 +160,12 @@ bool DeviceONI::trigger () throw (OpenNIException)
   return true;
 }
 
-bool DeviceONI::isStreaming () const throw (OpenNIException)
+bool DeviceONI::isStreaming () const 
 {
   return streaming_;
 }
 
-void DeviceONI::PlayerThreadFunction() throw (OpenNIException)
+void DeviceONI::PlayerThreadFunction() 
 {
   quit_ = false;
   while (!quit_)

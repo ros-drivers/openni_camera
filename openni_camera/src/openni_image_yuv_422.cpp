@@ -58,7 +58,7 @@ bool ImageYUV422::isResizingSupported (unsigned input_width, unsigned input_heig
   return ImageYUV422::resizingSupported (input_width, input_height, output_width, output_height);
 }
 
-void ImageYUV422::fillRGB (unsigned width, unsigned height, unsigned char* rgb_buffer, unsigned rgb_line_step) const throw (OpenNIException)
+void ImageYUV422::fillRGB (unsigned width, unsigned height, unsigned char* rgb_buffer, unsigned rgb_line_step) const 
 {
   // 0  1   2  3
   // u  y1  v  y2
@@ -73,7 +73,7 @@ void ImageYUV422::fillRGB (unsigned width, unsigned height, unsigned char* rgb_b
         THROW_OPENNI_EXCEPTION ("Downsampling only possible for power of two scale in both dimensions. Request was %d x %d -> %d x %d.", image_md_->XRes (), image_md_->YRes (), width, height);
   }
 
-  register const XnUInt8* yuv_buffer = image_md_->WritableData();
+  const XnUInt8* yuv_buffer = image_md_->WritableData();
 
   unsigned rgb_line_skip = 0;
   if (rgb_line_step != 0)
@@ -81,9 +81,9 @@ void ImageYUV422::fillRGB (unsigned width, unsigned height, unsigned char* rgb_b
 
   if (image_md_->XRes() == width && image_md_->YRes() == height)
   {
-    for( register unsigned yIdx = 0; yIdx < height; ++yIdx, rgb_buffer += rgb_line_skip )
+    for( unsigned yIdx = 0; yIdx < height; ++yIdx, rgb_buffer += rgb_line_skip )
     {
-      for( register unsigned xIdx = 0; xIdx < width; xIdx += 2, rgb_buffer += 6, yuv_buffer += 4 )
+      for( unsigned xIdx = 0; xIdx < width; xIdx += 2, rgb_buffer += 6, yuv_buffer += 4 )
       {
         int v = yuv_buffer[2] - 128;
         int u = yuv_buffer[0] - 128;
@@ -100,13 +100,13 @@ void ImageYUV422::fillRGB (unsigned width, unsigned height, unsigned char* rgb_b
   }
   else
   {
-    register unsigned yuv_step = image_md_->XRes() / width;
-    register unsigned yuv_x_step = yuv_step << 1;
-    register unsigned yuv_skip = (image_md_->YRes() / height - 1) * ( image_md_->XRes() << 1 );
+    unsigned yuv_step = image_md_->XRes() / width;
+    unsigned yuv_x_step = yuv_step << 1;
+    unsigned yuv_skip = (image_md_->YRes() / height - 1) * ( image_md_->XRes() << 1 );
     
-    for( register unsigned yIdx = 0; yIdx < image_md_->YRes(); yIdx += yuv_step, yuv_buffer += yuv_skip, rgb_buffer += rgb_line_skip )
+    for( unsigned yIdx = 0; yIdx < image_md_->YRes(); yIdx += yuv_step, yuv_buffer += yuv_skip, rgb_buffer += rgb_line_skip )
     {
-      for( register unsigned xIdx = 0; xIdx < image_md_->XRes(); xIdx += yuv_step, rgb_buffer += 3, yuv_buffer += yuv_x_step )
+      for( unsigned xIdx = 0; xIdx < image_md_->XRes(); xIdx += yuv_step, rgb_buffer += 3, yuv_buffer += yuv_x_step )
       {
         int v = yuv_buffer[2] - 128;
         int u = yuv_buffer[0] - 128;
@@ -119,7 +119,7 @@ void ImageYUV422::fillRGB (unsigned width, unsigned height, unsigned char* rgb_b
   }
 }
 
-void ImageYUV422::fillGrayscale (unsigned width, unsigned height, unsigned char* gray_buffer, unsigned gray_line_step) const throw (OpenNIException)
+void ImageYUV422::fillGrayscale (unsigned width, unsigned height, unsigned char* gray_buffer, unsigned gray_line_step) const 
 {
   // u y1 v y2
   if (width > image_md_->XRes () || height > image_md_->YRes ())
@@ -132,14 +132,14 @@ void ImageYUV422::fillGrayscale (unsigned width, unsigned height, unsigned char*
   if (gray_line_step != 0)
     gray_line_skip = gray_line_step - width;
 
-  register unsigned yuv_step = image_md_->XRes() / width;
-  register unsigned yuv_x_step = yuv_step << 1;
-  register unsigned yuv_skip = (image_md_->YRes() / height - 1) * ( image_md_->XRes() << 1 );
-  register const XnUInt8* yuv_buffer = (image_md_->WritableData() + 1);
+  unsigned yuv_step = image_md_->XRes() / width;
+  unsigned yuv_x_step = yuv_step << 1;
+  unsigned yuv_skip = (image_md_->YRes() / height - 1) * ( image_md_->XRes() << 1 );
+  const XnUInt8* yuv_buffer = (image_md_->WritableData() + 1);
 
-  for( register unsigned yIdx = 0; yIdx < image_md_->YRes(); yIdx += yuv_step, yuv_buffer += yuv_skip, gray_buffer += gray_line_skip )
+  for( unsigned yIdx = 0; yIdx < image_md_->YRes(); yIdx += yuv_step, yuv_buffer += yuv_skip, gray_buffer += gray_line_skip )
   {
-    for( register unsigned xIdx = 0; xIdx < image_md_->XRes(); xIdx += yuv_step, ++gray_buffer, yuv_buffer += yuv_x_step )
+    for( unsigned xIdx = 0; xIdx < image_md_->XRes(); xIdx += yuv_step, ++gray_buffer, yuv_buffer += yuv_x_step )
     {
       *gray_buffer = *yuv_buffer;
     }

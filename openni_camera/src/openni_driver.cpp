@@ -58,7 +58,7 @@ using namespace boost;
 namespace openni_wrapper
 {
 
-OpenNIDriver::OpenNIDriver () throw (OpenNIException)
+OpenNIDriver::OpenNIDriver () 
 {
   // Initialize the Engine
   XnStatus status = context_.Init ();
@@ -208,7 +208,7 @@ unsigned OpenNIDriver::updateDeviceList () throw ()
   return (device_context_.size ());
 }
 
-void OpenNIDriver::stopAll () throw (OpenNIException)
+void OpenNIDriver::stopAll () 
 {
   XnStatus status = context_.StopGeneratingAll ();
   if (status != XN_STATUS_OK)
@@ -229,7 +229,7 @@ OpenNIDriver::~OpenNIDriver () throw ()
   context_.Shutdown ();
 }
 
-boost::shared_ptr<OpenNIDevice> OpenNIDriver::createVirtualDevice (const string& path, bool repeat, bool stream) const throw (OpenNIException)
+boost::shared_ptr<OpenNIDevice> OpenNIDriver::createVirtualDevice (const string& path, bool repeat, bool stream) const 
 {
   return boost::shared_ptr<OpenNIDevice> (new DeviceONI (context_, path, repeat, stream));
 }
@@ -250,7 +250,7 @@ void OpenNIDriver::getPrimesenseSerial(xn::NodeInfo info, char* buffer, unsigned
         device.Release();
 }
 
-boost::shared_ptr<OpenNIDevice> OpenNIDriver::getDeviceByIndex (unsigned index) const throw (OpenNIException)
+boost::shared_ptr<OpenNIDevice> OpenNIDriver::getDeviceByIndex (unsigned index) const 
 {
   using namespace std;
 
@@ -292,7 +292,7 @@ boost::shared_ptr<OpenNIDevice> OpenNIDriver::getDeviceByIndex (unsigned index) 
 
 #ifndef _WIN32
 boost::shared_ptr<OpenNIDevice> 
-OpenNIDriver::getDeviceBySerialNumber (const std::string& serial_number) const throw (OpenNIException)
+OpenNIDriver::getDeviceBySerialNumber (const std::string& serial_number) const 
 {
   std::map<std::string, unsigned>::const_iterator it = serial_map_.find (serial_number);
 
@@ -308,7 +308,7 @@ OpenNIDriver::getDeviceBySerialNumber (const std::string& serial_number) const t
 }
 
 boost::shared_ptr<OpenNIDevice> 
-OpenNIDriver::getDeviceByAddress (unsigned char bus, unsigned char address) const throw (OpenNIException)
+OpenNIDriver::getDeviceByAddress (unsigned char bus, unsigned char address) const 
 {
   std::map<unsigned char, std::map<unsigned char, unsigned> >::const_iterator busIt = bus_map_.find (bus);
   if (busIt != bus_map_.end ())

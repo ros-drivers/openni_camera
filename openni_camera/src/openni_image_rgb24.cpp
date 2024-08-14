@@ -11,7 +11,7 @@ ImageRGB24::~ImageRGB24 () throw ()
 {
 }
 
-void ImageRGB24::fillGrayscale (unsigned width, unsigned height, unsigned char* gray_buffer, unsigned gray_line_step) const throw (OpenNIException)
+void ImageRGB24::fillGrayscale (unsigned width, unsigned height, unsigned char* gray_buffer, unsigned gray_line_step) const 
 {
   if (width > image_md_->XRes () || height > image_md_->YRes ())
     THROW_OPENNI_EXCEPTION ("Up-sampling not supported. Request was %d x %d -> %d x %d.", image_md_->XRes (), image_md_->YRes (), width, height);
@@ -43,7 +43,7 @@ void ImageRGB24::fillGrayscale (unsigned width, unsigned height, unsigned char* 
   }
 }
 
-void ImageRGB24::fillRGB (unsigned width, unsigned height, unsigned char* rgb_buffer, unsigned rgb_line_step) const throw (OpenNIException)
+void ImageRGB24::fillRGB (unsigned width, unsigned height, unsigned char* rgb_buffer, unsigned rgb_line_step) const 
 {
   if (width > image_md_->XRes () || height > image_md_->YRes ())
     THROW_OPENNI_EXCEPTION ("Up-sampling not supported. Request was %d x %d -> %d x %d.", image_md_->XRes (), image_md_->YRes (), width, height);

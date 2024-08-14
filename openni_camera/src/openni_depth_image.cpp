@@ -44,7 +44,7 @@ using namespace std;
 namespace openni_wrapper
 {
 
-void DepthImage::fillDepthImageRaw(unsigned width, unsigned height, unsigned short* depth_buffer, unsigned line_step) const throw (OpenNIException)
+void DepthImage::fillDepthImageRaw(unsigned width, unsigned height, unsigned short* depth_buffer, unsigned line_step) const 
 {
   if (width > depth_md_->XRes () || height > depth_md_->YRes ())
     THROW_OPENNI_EXCEPTION ("upsampling not supported: %d x %d -> %d x %d", depth_md_->XRes (), depth_md_->YRes (), width, height);
@@ -96,7 +96,7 @@ void DepthImage::fillDepthImageRaw(unsigned width, unsigned height, unsigned sho
   }
 }
 
-void DepthImage::fillDepthImage (unsigned width, unsigned height, float* depth_buffer, unsigned line_step) const throw (OpenNIException)
+void DepthImage::fillDepthImage (unsigned width, unsigned height, float* depth_buffer, unsigned line_step) const 
 {
   if (width > depth_md_->XRes () || height > depth_md_->YRes ())
     THROW_OPENNI_EXCEPTION ("upsampling not supported: %d x %d -> %d x %d", depth_md_->XRes (), depth_md_->YRes (), width, height);
@@ -141,7 +141,7 @@ void DepthImage::fillDepthImage (unsigned width, unsigned height, float* depth_b
   }
 }
 
-void DepthImage::fillDisparityImage (unsigned width, unsigned height, float* disparity_buffer, unsigned line_step) const throw (OpenNIException)
+void DepthImage::fillDisparityImage (unsigned width, unsigned height, float* disparity_buffer, unsigned line_step) const 
 {
   if (width > depth_md_->XRes () || height > depth_md_->YRes ())
     THROW_OPENNI_EXCEPTION ("upsampling not supported: %d x %d -> %d x %d", depth_md_->XRes (), depth_md_->YRes (), width, height);

@@ -62,7 +62,7 @@ bool ImageBayerGRBG::isResizingSupported (unsigned input_width, unsigned input_h
   return ImageBayerGRBG::resizingSupported (input_width, input_height, output_width, output_height);
 }
 
-void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned char* gray_buffer, unsigned gray_line_step) const throw (OpenNIException)
+void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned char* gray_buffer, unsigned gray_line_step) const 
 {
   if (width > image_md_->XRes () || height > image_md_->YRes ())
     THROW_OPENNI_EXCEPTION ("Upsampling not supported. Request was: %d x %d -> %d x %d", image_md_->XRes (), image_md_->YRes (), width, height);
@@ -79,7 +79,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
     if (debayering_method_ == Bilinear)
     {
       // first line GRGRGR
-      for (register unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+      for (unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
       {
         gray_buffer[0] = bayer_pixel[0]; // green pixel
         gray_buffer[1] = AVG3 (bayer_pixel[0], bayer_pixel[2], bayer_pixel[1 + line_skip]); // interpolated green pixel
@@ -89,14 +89,14 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
       gray_buffer += 2 + gray_line_skip;
       bayer_pixel += 2;
 
-      for (register unsigned yIdx = 1; yIdx < height - 1; yIdx += 2)
+      for (unsigned yIdx = 1; yIdx < height - 1; yIdx += 2)
       {
         // blue line
         gray_buffer[0] = AVG3 (bayer_pixel[-line_skip], bayer_pixel[line_skip], bayer_pixel[1]);
         gray_buffer[1] = bayer_pixel[1];
         gray_buffer += 2;
         bayer_pixel += 2;
-        for (register unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+        for (unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
         {
           gray_buffer[0] = AVG4 (bayer_pixel[-line_skip], bayer_pixel[line_skip], bayer_pixel[-1], bayer_pixel[1]);
           gray_buffer[1] = bayer_pixel[1];
@@ -104,7 +104,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
         gray_buffer += gray_line_skip;
 
         // red line
-        for (register unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+        for (unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
         {
           gray_buffer[0] = bayer_pixel[0]; // green pixel
           gray_buffer[1] = AVG4 (bayer_pixel[0], bayer_pixel[2], bayer_pixel[-line_skip + 1], bayer_pixel[line_skip + 1]); // interpolated green pixel
@@ -120,7 +120,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
       gray_buffer[1] = bayer_pixel[1];
       gray_buffer += 2;
       bayer_pixel += 2;
-      for (register unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+      for (unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
       {
         gray_buffer[0] = AVG3 (bayer_pixel[-1], bayer_pixel[1], bayer_pixel[-line_skip]);
         gray_buffer[1] = bayer_pixel[1];
@@ -130,7 +130,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
     {
       int dv, dh;
       // first line GRGRGR
-      for (register unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+      for (unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
       {
         gray_buffer[0] = bayer_pixel[0]; // green pixel
         gray_buffer[1] = AVG3 (bayer_pixel[0], bayer_pixel[2], bayer_pixel[1 + line_skip]); // interpolated green pixel
@@ -140,14 +140,14 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
       gray_buffer += 2 + gray_line_skip;
       bayer_pixel += 2;
 
-      for (register unsigned yIdx = 1; yIdx < height - 1; yIdx += 2)
+      for (unsigned yIdx = 1; yIdx < height - 1; yIdx += 2)
       {
         // blue line
         gray_buffer[0] = AVG3 (bayer_pixel[-line_skip], bayer_pixel[line_skip], bayer_pixel[1]);
         gray_buffer[1] = bayer_pixel[1];
         gray_buffer += 2;
         bayer_pixel += 2;
-        for (register unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+        for (unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
         {
           dv = abs (bayer_pixel[-line_skip] - bayer_pixel[line_skip]);
           dh = abs (bayer_pixel[-1] - bayer_pixel[1]);
@@ -163,7 +163,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
         gray_buffer += gray_line_skip;
 
         // red line
-        for (register unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+        for (unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
         {
           gray_buffer[0] = bayer_pixel[0];
 
@@ -187,7 +187,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
       gray_buffer[1] = bayer_pixel[1];
       gray_buffer += 2;
       bayer_pixel += 2;
-      for (register unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+      for (unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
       {
         gray_buffer[0] = AVG3 (bayer_pixel[-1], bayer_pixel[1], bayer_pixel[-line_skip]);
         gray_buffer[1] = bayer_pixel[1];
@@ -197,7 +197,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
     {
       int dv, dh;
       // first line GRGRGR
-      for (register unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+      for (unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
       {
         gray_buffer[0] = bayer_pixel[0]; // green pixel
         gray_buffer[1] = AVG3 (bayer_pixel[0], bayer_pixel[2], bayer_pixel[1 + line_skip]); // interpolated green pixel
@@ -207,14 +207,14 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
       gray_buffer += 2 + gray_line_skip;
       bayer_pixel += 2;
 
-      for (register unsigned yIdx = 1; yIdx < height - 1; yIdx += 2)
+      for (unsigned yIdx = 1; yIdx < height - 1; yIdx += 2)
       {
         // blue line
         gray_buffer[0] = AVG3 (bayer_pixel[-line_skip], bayer_pixel[line_skip], bayer_pixel[1]);
         gray_buffer[1] = bayer_pixel[1];
         gray_buffer += 2;
         bayer_pixel += 2;
-        for (register unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+        for (unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
         {
           dv = abs (bayer_pixel[-line_skip] - bayer_pixel[line_skip]);
           dh = abs (bayer_pixel[-1] - bayer_pixel[1]);
@@ -230,7 +230,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
         gray_buffer += gray_line_skip;
 
         // red line
-        for (register unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+        for (unsigned xIdx = 0; xIdx < width - 2; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
         {
           gray_buffer[0] = bayer_pixel[0];
 
@@ -253,7 +253,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
       gray_buffer[1] = bayer_pixel[1];
       gray_buffer += 2;
       bayer_pixel += 2;
-      for (register unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
+      for (unsigned xIdx = 2; xIdx < width; xIdx += 2, gray_buffer += 2, bayer_pixel += 2)
       {
         gray_buffer[0] = AVG3 (bayer_pixel[-1], bayer_pixel[1], bayer_pixel[-line_skip]);
         gray_buffer[1] = bayer_pixel[1];
@@ -269,15 +269,15 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
       THROW_OPENNI_EXCEPTION ("Downsampling only possible for multiple of 2 in both dimensions. Request was %d x %d -> %d x %d.", image_md_->XRes (), image_md_->YRes (), width, height);
 
     // fast method -> simply takes each or each 2nd pixel-group to get gray values out
-    register unsigned bayerXStep = image_md_->XRes () / width;
-    register unsigned bayerYSkip = (image_md_->YRes () / height - 1) * image_md_->XRes ();
+    unsigned bayerXStep = image_md_->XRes () / width;
+    unsigned bayerYSkip = (image_md_->YRes () / height - 1) * image_md_->XRes ();
 
     // Downsampling and debayering at once
-    register const XnUInt8* bayer_buffer = image_md_->WritableData ();
+    const XnUInt8* bayer_buffer = image_md_->WritableData ();
 
-    for (register unsigned yIdx = 0; yIdx < height; ++yIdx, bayer_buffer += bayerYSkip, gray_buffer += gray_line_skip) // skip a line
+    for (unsigned yIdx = 0; yIdx < height; ++yIdx, bayer_buffer += bayerYSkip, gray_buffer += gray_line_skip) // skip a line
     {
-      for (register unsigned xIdx = 0; xIdx < width; ++xIdx, ++gray_buffer, bayer_buffer += bayerXStep)
+      for (unsigned xIdx = 0; xIdx < width; ++xIdx, ++gray_buffer, bayer_buffer += bayerXStep)
       {
         *gray_buffer = AVG (bayer_buffer[0], bayer_buffer[ image_md_->XRes () + 1]);
       }
@@ -285,7 +285,7 @@ void ImageBayerGRBG::fillGrayscale (unsigned width, unsigned height, unsigned ch
   } // downsampling
 }
 
-void ImageBayerGRBG::fillRGB (unsigned width, unsigned height, unsigned char* rgb_buffer, unsigned rgb_line_step) const throw (OpenNIException)
+void ImageBayerGRBG::fillRGB (unsigned width, unsigned height, unsigned char* rgb_buffer, unsigned rgb_line_step) const 
 {
   if (width > image_md_->XRes () || height > image_md_->YRes ())
     THROW_OPENNI_EXCEPTION ("Upsampling only possible for multiple of 2 in both dimensions. Request was %d x %d -> %d x %d.", image_md_->XRes (), image_md_->YRes (), width, height);
@@ -298,8 +298,8 @@ void ImageBayerGRBG::fillRGB (unsigned width, unsigned height, unsigned char* rg
 
   if (image_md_->XRes () == width && image_md_->YRes () == height)
   {
-    register const XnUInt8 *bayer_pixel = image_md_->WritableData ();
-    register unsigned yIdx, xIdx;
+    const XnUInt8 *bayer_pixel = image_md_->WritableData ();
+    unsigned yIdx, xIdx;
 
     int bayer_line_step = image_md_->XRes ();
     int bayer_line_step2 = image_md_->XRes () << 1;
@@ -1400,15 +1400,15 @@ void ImageBayerGRBG::fillRGB (unsigned width, unsigned height, unsigned char* rg
       THROW_OPENNI_EXCEPTION ("Downsampling only possible for integer scales in both dimensions. Request was %d x %d -> %d x %d.", image_md_->XRes (), image_md_->YRes (), width, height);
 
     // get each or each 2nd pixel group to find rgb values!
-    register unsigned bayerXStep = image_md_->XRes () / width;
-    register unsigned bayerYSkip = (image_md_->YRes () / height - 1) * image_md_->XRes ();
+    unsigned bayerXStep = image_md_->XRes () / width;
+    unsigned bayerYSkip = (image_md_->YRes () / height - 1) * image_md_->XRes ();
 
     // Downsampling and debayering at once
-    register const XnUInt8* bayer_buffer = image_md_->WritableData ();
+    const XnUInt8* bayer_buffer = image_md_->WritableData ();
 
-    for (register unsigned yIdx = 0; yIdx < height; ++yIdx, bayer_buffer += bayerYSkip, rgb_buffer += rgb_line_skip) // skip a line
+    for (unsigned yIdx = 0; yIdx < height; ++yIdx, bayer_buffer += bayerYSkip, rgb_buffer += rgb_line_skip) // skip a line
     {
-      for (register unsigned xIdx = 0; xIdx < width; ++xIdx, rgb_buffer += 3, bayer_buffer += bayerXStep)
+      for (unsigned xIdx = 0; xIdx < width; ++xIdx, rgb_buffer += 3, bayer_buffer += bayerXStep)
       {
         rgb_buffer[ 2 ] = bayer_buffer[ image_md_->XRes () ];
         rgb_buffer[ 1 ] = AVG (bayer_buffer[0], bayer_buffer[ image_md_->XRes () + 1]);

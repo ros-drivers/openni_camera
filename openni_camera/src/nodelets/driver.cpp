@@ -88,7 +88,7 @@ void DriverNodelet::onInit ()
 
   // Initialize dynamic reconfigure
   reconfigure_server_.reset( new ReconfigureServer(param_nh) );
-  reconfigure_server_->setCallback(boost::bind(&DriverNodelet::configCb, this, _1, _2));
+  reconfigure_server_->setCallback([this](auto cfg, uint32_t lvl){ configCb(cfg, lvl); });
   
   // Setting up device can take awhile but onInit shouldn't block, so we spawn a
   // new thread to do all the initialization

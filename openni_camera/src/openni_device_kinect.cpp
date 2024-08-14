@@ -45,7 +45,7 @@ using namespace boost;
 namespace openni_wrapper
 {
 
-DeviceKinect::DeviceKinect (xn::Context& context, const xn::NodeInfo& device_node, const xn::NodeInfo& image_node, const xn::NodeInfo& depth_node, const xn::NodeInfo& ir_node) throw (OpenNIException)
+DeviceKinect::DeviceKinect (xn::Context& context, const xn::NodeInfo& device_node, const xn::NodeInfo& image_node, const xn::NodeInfo& depth_node, const xn::NodeInfo& ir_node) 
 : OpenNIDevice (context, device_node, image_node, depth_node, ir_node)
 , debayering_method_ (ImageBayerGRBG::EdgeAwareWeighted)
 {
@@ -93,7 +93,7 @@ bool DeviceKinect::isImageResizeSupported (unsigned input_width, unsigned input_
   return ImageBayerGRBG::resizingSupported (input_width, input_height, output_width, output_height);
 }
 
-void DeviceKinect::enumAvailableModes () throw (OpenNIException)
+void DeviceKinect::enumAvailableModes () 
 {
   XnMapOutputMode output_mode;
   available_image_modes_.clear();
@@ -116,13 +116,13 @@ boost::shared_ptr<Image> DeviceKinect::getCurrentImage (boost::shared_ptr<xn::Im
   return boost::shared_ptr<Image> (new ImageBayerGRBG (image_data, debayering_method_));
 }
 
-void DeviceKinect::setSynchronization (bool on_off) throw (OpenNIException)
+void DeviceKinect::setSynchronization (bool on_off) 
 {
   if (on_off)
     THROW_OPENNI_EXCEPTION ("Microsoft Kinect does not support Hardware synchronization.");
 }
 
-bool DeviceKinect::isSynchronized () const throw (OpenNIException)
+bool DeviceKinect::isSynchronized () const 
 {
   return false;
 }
@@ -132,12 +132,12 @@ bool DeviceKinect::isSynchronizationSupported () const throw ()
   return false;
 }
 
-bool DeviceKinect::isDepthCropped () const throw (OpenNIException)
+bool DeviceKinect::isDepthCropped () const 
 {
   return false;
 }
 
-void DeviceKinect::setDepthCropping (unsigned x, unsigned y, unsigned width, unsigned height) throw (OpenNIException)
+void DeviceKinect::setDepthCropping (unsigned x, unsigned y, unsigned width, unsigned height) 
 {
   if (width != 0 && height != 0)
     THROW_OPENNI_EXCEPTION ("Microsoft Kinect does not support cropping for the depth stream.");

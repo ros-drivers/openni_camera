@@ -69,18 +69,18 @@ public:
   virtual bool isResizingSupported (unsigned input_width, unsigned input_height,
                                     unsigned output_width, unsigned output_height) const = 0;
   virtual void fillRGB (unsigned width, unsigned height, unsigned char* rgb_buffer,
-                        unsigned rgb_line_step = 0) const throw (OpenNIException) = 0;
+                        unsigned rgb_line_step = 0) const  = 0;
 
   virtual Encoding getEncoding () const = 0;
 
   inline void 
-  fillRaw (unsigned char* rgb_buffer) const throw (OpenNIException)
+  fillRaw (unsigned char* rgb_buffer) const 
   {
     memcpy (rgb_buffer, image_md_->WritableData(), image_md_->DataSize ());
   }
 
   virtual void fillGrayscale (unsigned width, unsigned height, unsigned char* gray_buffer,
-                              unsigned gray_line_step = 0) const throw (OpenNIException) = 0;
+                              unsigned gray_line_step = 0) const  = 0;
 
   inline unsigned getWidth () const throw ();
   inline unsigned getHeight () const throw ();
